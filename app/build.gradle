@@ -58,7 +58,9 @@ dependencies {
     implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
     implementation "com.google.accompanist:accompanist-insets-ui:$accompanist_version"
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation 'androidx.activity:activity-compose:1.3.1'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.code.gson:gson:2.8.8'
@@ -72,8 +74,8 @@ dependencies {
     implementation "androidx.startup:startup-runtime:1.1.0"
     //权限处理
     implementation 'com.github.getActivity:XXPermissions:12.0'
-
-
+    //阿里巴巴json
+    implementation 'com.alibaba:fastjson:1.2.73'
     implementation "com.afollestad.material-dialogs:lifecycle:3.3.0"
     implementation "com.afollestad.material-dialogs:core:3.3.0"
     implementation "com.afollestad.material-dialogs:color:3.3.0"

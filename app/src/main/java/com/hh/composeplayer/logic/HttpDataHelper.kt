@@ -1,5 +1,6 @@
 package com.hh.composeplayer.logic
 
+import com.alibaba.fastjson.JSON
 import com.google.gson.Gson
 import com.hh.composeplayer.api.ApiService
 import com.hh.composeplayer.api.TaskApi
@@ -9,6 +10,7 @@ import com.hh.composeplayer.bean.Ty
 import com.hh.composeplayer.bean.Video
 import com.hh.composeplayer.util.xmlToJson
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -23,7 +25,7 @@ import kotlinx.coroutines.launch
 class HttpDataHelper {
     suspend fun getTabList() : List<Ty> = coroutineScope{
         val tabListr : MutableList<Ty> = ArrayList()
-        val job = launch (IO) {
+        val job = async (IO)  {
             val tabList = TaskApi.create(ApiService::class.java).getPlayer()
             val jsonObject = xmlToJson(tabList.toString())?.toJson()
             val homeTab = Gson().fromJson(jsonObject.toString(), Jsons::class.java)
@@ -44,30 +46,30 @@ class HttpDataHelper {
                     }
                 }
             }
+            tabListr
         }
-        job.join()
-        tabListr
+        job.await()
     }
 
     suspend fun getPlayerList(state :Long) : List<Video> = coroutineScope {
         val movieList : MutableList<Video> = ArrayList()
-        val job = launch (IO) {
-            val movieStr = if(                                                                                    state == 0L){
+        val job = async (IO)  {
+            val movieStr = if(state == 0L){
                 TaskApi.create(ApiService::class.java).getPlayerListZx(0)
             } else{
                 TaskApi.create(ApiService::class.java).getPlayerList(state.toString(),1)
             }
             val jsonObject = xmlToJson(movieStr.toString())?.toJson()
-            val movieBean = Gson().fromJson(jsonObject.toString(), MovieBean::class.java)
+            val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
             movieBean.rss?.run {
                 list?.apply {
                     video?.apply {
-                        movieList.addAll(video)
+                        movieList.addAll(this)
                     }
                 }
             }
+            movieList
         }
-        job.join()
-        movieList
+        job.await()
     }
 }

@@ -21,18 +21,4 @@ class MainViewModel : BaseViewModel() {
      * Pager Number
      */
     val pagerState = PagerState(maxPage = 2)
-
-    /**
-     * Show Composable
-     */
-    var modelStatus : Model? by mutableStateOf( null )
-
-
-    fun startModel(model: Model){
-        modelStatus = model
-    }
-
-    fun endModel(){
-        modelStatus = null
-    }
 }

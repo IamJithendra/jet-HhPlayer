@@ -43,6 +43,7 @@ import com.hh.composeplayer.ui.viewmodel.SearchViewModel
 import com.hh.composeplayer.ui.viewmodel.SettingViewModel
 import com.hh.composeplayer.util.CpNavigation.backAndReturnsIsLastPage
 import com.hh.composeplayer.util.CpNavigation.navHostController
+import com.hh.composeplayer.util.Mylog.e
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -58,6 +59,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
             .permission(Permission.MANAGE_EXTERNAL_STORAGE)
             .request(object : OnPermissionCallback {
                 override fun onGranted(granted: List<String>, all: Boolean) {
+                    e("HHLog","onGranted")
                     setContent {
                         HelloComPoseTheme {
                             navHostController = rememberNavController()
@@ -75,6 +77,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
                     } else {
                         Toast.makeText(this@MainActivity, "获取存储权限失败", Toast.LENGTH_SHORT).show()
                     }
+                    e("HHLog","onDenied")
                     setContent {
                         HelloComPoseTheme {
                             navHostController = rememberNavController()
@@ -111,6 +114,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
 @Composable
 private fun Scaffold(viewModel: MainViewModel) {
+    e("HHLog","Scaffold")
     val scaffoldState = rememberScaffoldState()//该脚手架的状态。
     ProvideWindowInsets {
 //        val navController = rememberNavController()
@@ -128,16 +132,19 @@ private fun Scaffold(viewModel: MainViewModel) {
 //                    when (CpNavigation.currentScreen) {
                         //当前需要展示首页/列表页
                     composable(Model.Setting.toString()) {
+                        e("HHLog","composableSetting")
                         CpSetting()
                     }
                     composable(Model.Search.toString()){
+                        e("HHLog","composableSearch")
                         SearchView()
                     }
                     composable(Model.Main.toString()){
                         LaunchedEffect("mainViewModel"){
                             viewModel.appColor = SettingUtil.getColor()
                         }
-                        MainContent(viewModel = viewModel,innerPadding = innerPadding)
+                        e("HHLog","composableMain")
+                        MainContent(viewModel = viewModel)
                     }
                 }
             }
@@ -146,14 +153,16 @@ private fun Scaffold(viewModel: MainViewModel) {
 }
 
 @Composable
-private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel,
-                        innerPadding: PaddingValues) {
+private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel) {
     Pager(state = viewModel.pagerState, modifier.fillMaxSize()) {
         when (page) {
             0 -> {
-                Home(innerPadding = innerPadding,)
+                e("HHLog","MainContentHome")
+                Home()
             }
-            1 -> Mine()
+            1 -> {
+                e("HHLog","MainContentMine")
+                Mine()}
         }
     }
 

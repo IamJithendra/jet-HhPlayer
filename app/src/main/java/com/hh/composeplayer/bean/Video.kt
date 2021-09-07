@@ -1,28 +1,30 @@
 package com.hh.composeplayer.bean
 
-data class Video(
-    val dt: String,
-    val id: String,
-    val last: String,
-    val name: String,
-    val note: String,
-    val tid: String,
-    val type: String,
-    val area: String? = null,
-    val year: String? = null,
-    val director: String? = null,
-    val dl: PlayerSiteList? = null,
-    val pic: String? = null,
-    val actor: String? = null,
-    val des: String? = null,
-    val state: String? = null,
-    val lang: String? = null,
-)
+class Video(){
+    var dt: String? = null
+    var id: String? = null
+    var last: String? = null
+    var name: String? = null
+    var note: String? = null
+    var tid: String? = null
+    var type: String? = null
+    var area: String? = null
+    var year: String? = null
+    var director: String? = null
+    var dl: PlayerSiteList? = null
+    var pic: String? = null
+    var actor: String? = null
+    var des: String? = null
+    var state: String? = null
+    var lang: String? = null
+}
 
-data class PlayerSiteList(
-    val dd : MutableList<PlayerSite>
-)
+class PlayerSiteList{
+    var dd : MutableList<PlayerSite>? = null
+}
 
-data class PlayerSite(
-    val content : String,val flag : String,val contentList:List<String>
-)
+class PlayerSite{
+    var content : String? = null
+    var flag : String? = null
+    var contentList:List<String>? = null
+}

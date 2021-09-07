@@ -1,9 +1,9 @@
 package com.hh.composeplayer.bean
 
-data class ListVideo(
-    val page: String,
-    val pagecount: String,
-    val pagesize: String,
-    val recordcount: String,
-    val video: List<Video>?
-)
+class ListVideo{
+    var page: String? = null
+    var pagecount: String? = null
+    var pagesize: String? = null
+    var recordcount: String? = null
+    var video: List<Video>? = null
+}

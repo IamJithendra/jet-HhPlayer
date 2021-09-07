@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
+import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -35,10 +36,13 @@ import com.hh.composeplayer.bean.Model
 import com.hh.composeplayer.bean.Ty
 import com.hh.composeplayer.bean.Video
 import com.hh.composeplayer.ui.viewmodel.HomeViewModel
+import com.hh.composeplayer.ui.viewmodel.MovieListViewModel
 import com.hh.composeplayer.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -49,35 +53,60 @@ import kotlinx.coroutines.withContext
  * @CreateDate: 2021/8/27  9:39
  */
 @Composable
-fun Home(modifier: Modifier = Modifier, innerPadding: PaddingValues) {
+fun Home(modifier: Modifier = Modifier) {
+    Mylog.e("HHLog", "Home")
     val homeViewModel: HomeViewModel = viewModel()
     homeViewModel.let {
         if (it.movieTabList.size == 0) {
             homeViewModel.getMovieTabList()
         }
-        LaunchedEffect("homeViewModel") {
-            withContext(Dispatchers.IO) {
-                it.appColor = SettingUtil.getColor()
-            }
+        LaunchedEffect(homeViewModel) {
+            it.appColor = SettingUtil.getColor()
         }
     }
     Column(modifier.fillMaxSize()) {
         MainToolBar(modifier, homeViewModel)
         MovieTabLayout(modifier, homeViewModel)
         if (homeViewModel.movieTabList.size > 0) {
-            Pager(PagerState(maxPage = 2), modifier.fillMaxSize()) {
-//            HomeContent(modifier, homeViewModel, innerPadding)
-//                if (homeViewModel.mainTopTabState == homeViewModel.isShowError) {
-//                    Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-//                        Text("没有数据")
-//                    }
-//                } else {
-                HomeContent1(modifier, homeViewModel, innerPadding, homeViewModel.mainTopTabState)
-//                }
+            MovieListView(homeViewModel = homeViewModel)
+            LaunchedEffect(homeViewModel.movieTabList){
+                homeViewModel.getMovieTabList()
             }
         }
     }
     BoxProgress()
+}
+
+@Composable
+fun MovieListView(modifier: Modifier = Modifier, homeViewModel: HomeViewModel) {
+    homeViewModel.pagerState.maxPage = homeViewModel.movieTabList.size
+    Pager(homeViewModel.pagerState) {
+        when (currentPage) {
+            homeViewModel.movieTabList[homeViewModel.mainTopTabState].staffId.toInt() -> {
+                val viewModel = viewModel(
+                    modelClass = MovieListViewModel::class.java,
+                    key = homeViewModel.mainTopTabState.toString()
+                )
+                LaunchedEffect(currentPage) {
+                    viewModel.getMovieList(
+                        homeViewModel.mainTopTabState,
+                        homeViewModel.movieTabList[homeViewModel.mainTopTabState].staffId
+                    ).let {
+                        if (it.isNotEmpty()) {
+                            viewModel.movieList.value!!.clear()
+                            viewModel.movieList.value!!.addAll(it)
+                            viewModel.isShowError = false
+                        } else {
+                            viewModel.isShowError = true
+                        }
+
+                    }
+                }
+                HomeContent1(modifier, viewModel, homeViewModel)
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -87,8 +116,7 @@ private fun HomeContent(
     innerPadding: PaddingValues
 ) {
 
-    SwipeRefresh(rememberSwipeRefreshState(viewModel.isRefreshing), {
-        viewModel.movieListRefresh()
+    SwipeRefresh(rememberSwipeRefreshState(false), {
     }) {
         val movieList = remember {
             mutableStateListOf<Video>()
@@ -128,7 +156,7 @@ private fun HomeContent(
                                         modifier = modifier.height(200.dp)
                                     )
                                     Text(
-                                        text = movieList[it].name,
+                                        text = movieList[it].name!!,
                                         modifier
                                             .height(40.dp)
                                             .background(
@@ -161,72 +189,68 @@ private fun HomeContent(
 @Composable
 private fun HomeContent1(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel,
-    innerPadding: PaddingValues,
-    state: Int
+    viewModel: MovieListViewModel,
+    homeViewModel: HomeViewModel
 ) {
-
+    Mylog.e("HHLog", "HomeContent1")
     SwipeRefresh(rememberSwipeRefreshState(viewModel.isRefreshing), {
-        viewModel.movieListRefresh()
+        viewModel.movieListRefresh(
+            homeViewModel.mainTopTabState,
+            homeViewModel.movieTabList[homeViewModel.mainTopTabState].staffId
+        )
     }) {
-//        val movieList : MutableList<Video> = ArrayList()
-        val kust = remember {
-            mutableStateListOf<Video>()
-        }
-        LaunchedEffect(state) {
-            viewModel.getMovieList(state).let {
-                if(it.isNotEmpty()){
-                    kust.clear()
-                    kust.addAll(viewModel.getMovieList(state))
-                }
-                else{
-
-                }
+        val movieList = viewModel.movieList.observeAsState()
+        if (viewModel.isShowError) {
+            Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("没有数据")
             }
-        }
-        LazyVerticalGrid(cells = GridCells.Fixed(2), contentPadding = innerPadding) {
-            if (kust.size > 0) {
-                items(kust) {
-                    Row {
-                        Box(
-                            modifier = modifier
-                                .weight(1f, fill = true)
-                                .padding(12.dp)
-                                .wrapContentHeight(),
-                            propagateMinConstraints = true,
-                        ) {
-                            Image(
-                                painter = rememberCoilPainter(request = it.pic),
-                                contentDescription = "avater",
-                                contentScale = ContentScale.FillBounds,
-                                modifier = modifier.height(200.dp)
-                            )
-                            Text(
-                                text = it.name,
-                                modifier
-                                    .height(40.dp)
-                                    .background(
-                                        colorResource(id = R.color.translucent_5)
-                                    )
-                                    .padding(top = 10.dp)
-                                    .align(Alignment.BottomCenter),
-                                textAlign = TextAlign.Center,
-                                fontSize = 13.sp,
-                                color = Color.White,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                fontStyle = FontStyle.Italic,
-                                fontWeight = FontWeight.Medium,
-                                textDecoration = TextDecoration.None
-                            )
+        } else {
+            LazyVerticalGrid(cells = GridCells.Fixed(2), modifier.padding(bottom = 90.dp)) {
+                if (movieList.value!!.size > 0) {
+                    items(movieList.value!!) {
+                        Row {
+                            Box(
+                                modifier = modifier
+                                    .weight(1f, fill = true)
+                                    .padding(12.dp)
+                                    .wrapContentHeight(),
+                                propagateMinConstraints = true,
+                            ) {
+                                Image(
+                                    painter = rememberCoilPainter(request = it.pic),
+                                    contentDescription = "avater",
+                                    contentScale = ContentScale.FillBounds,
+                                    modifier = modifier.height(200.dp)
+                                )
+                                Text(
+                                    text = it.name!!,
+                                    modifier
+                                        .height(40.dp)
+                                        .background(
+                                            colorResource(id = R.color.translucent_5)
+                                        )
+                                        .padding(top = 10.dp)
+                                        .align(Alignment.BottomCenter),
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 13.sp,
+                                    color = Color.White,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontStyle = FontStyle.Italic,
+                                    fontWeight = FontWeight.Medium,
+                                    textDecoration = TextDecoration.None
+                                )
+                            }
                         }
                     }
                 }
-            } else {
-                item {
-                    Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("没有数据")
+                else{
+                    item {
+                        Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text("没有数据")
+                        }
                     }
+
                 }
             }
         }
@@ -235,6 +259,7 @@ private fun HomeContent1(
 
 @Composable
 private fun MainToolBar(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
+    Mylog.e("HHLog", "MainToolBar")
     TopAppBar(
         { Text(stringResource(id = R.string.main_title_home), color = Color.White) },
         modifier = modifier,
@@ -256,7 +281,7 @@ private fun MainToolBar(modifier: Modifier = Modifier, viewModel: HomeViewModel)
 
 @Composable
 private fun MovieTabLayout(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
-//    val titles = remember { listOf("标签1", "标签2", "标签3", "标签4", "这是很长的标签5") }
+    Mylog.e("HHLog", "MovieTabLayout")
     Column {
         ScrollableTabRow(
             selectedTabIndex = viewModel.mainTopTabState,
@@ -284,6 +309,7 @@ private fun MovieTabLayout(modifier: Modifier = Modifier, viewModel: HomeViewMod
 
 @Composable
 fun NewTabs(modifier: Modifier = Modifier, viewModel: HomeViewModel, titles: List<Ty>) {
+    Mylog.e("HHLog", "NewTabs")
     val tabList = remember { titles }
     tabList.forEachIndexed { index, title ->
         Tab(
@@ -300,7 +326,7 @@ fun NewTabs(modifier: Modifier = Modifier, viewModel: HomeViewModel, titles: Lis
             selected = viewModel.mainTopTabState == index,
             onClick = {
                 viewModel.mainTopTabState = index
-//                      viewModel.movieListRefresh()
+                viewModel.pagerState.currentPage = index
             },
             selectedContentColor = Color(viewModel.appColor),
             unselectedContentColor = colorResource(R.color.font_primary),

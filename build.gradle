@@ -8,5 +8,6 @@ buildscript {
     ext {
         compose_version = '1.0.1'
         accompanist_version = '0.16.1'
+        kotlin_version = '1.5.21'
     }
 }

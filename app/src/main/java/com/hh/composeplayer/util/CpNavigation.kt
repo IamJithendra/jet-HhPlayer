@@ -30,6 +30,7 @@ object CpNavigation {
         currentScreen = screenName
         navHostController.navigate(screenName.name)
         navList.add(screenName)
+
     }
 //    /**
 //     * 返回到上一页
