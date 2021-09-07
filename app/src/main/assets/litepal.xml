@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="composePlayer" />
+
+    <version value="3" />
+    <list>
+        <mapping class="com.hh.composeplayer.bean.Jsons" />
+        <mapping class="com.hh.composeplayer.bean.Rss" />
+        <mapping class="com.hh.composeplayer.bean.Class" />
+        <mapping class="com.hh.composeplayer.bean.Ty" />
+    </list>
+
+</litepal>
