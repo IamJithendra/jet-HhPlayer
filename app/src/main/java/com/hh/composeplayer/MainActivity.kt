@@ -27,6 +27,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.*
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import com.hh.composeplayer.base.BaseActivity
@@ -112,18 +114,20 @@ class MainActivity : BaseActivity<MainViewModel>() {
 }
 
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun Scaffold(viewModel: MainViewModel) {
     e("HHLog","Scaffold")
     val scaffoldState = rememberScaffoldState()//该脚手架的状态。
+    val coroutineScope = rememberCoroutineScope()
     ProvideWindowInsets {
 //        val navController = rememberNavController()
         Scaffold(
             scaffoldState = scaffoldState,
             bottomBar = {
                 if(CpNavigation.currentScreen == Model.Main){
-                    MainBottomBar(viewModel,viewModel.pagerState.currentPage) {
-                        viewModel.pagerState.currentPage = it
+                    MainBottomBar(viewModel) {
+                        coroutineScope.launch { viewModel.pagerState.animateScrollToPage(it) }
                     }
                 }
             },
@@ -152,9 +156,10 @@ private fun Scaffold(viewModel: MainViewModel) {
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel) {
-    Pager(state = viewModel.pagerState, modifier.fillMaxSize()) {
+    HorizontalPager(state = viewModel.pagerState, modifier.fillMaxSize()) {page->
         when (page) {
             0 -> {
                 e("HHLog","MainContentHome")
@@ -168,8 +173,9 @@ private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel)
 
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun MainBottomBar(viewModel: MainViewModel,selected: Int, currentChanged: (Int) -> Unit) {
+private fun MainBottomBar(viewModel: MainViewModel, currentChanged: (Int) -> Unit) {
     CpBottomBar {
         Column(
             Modifier
@@ -182,7 +188,7 @@ private fun MainBottomBar(viewModel: MainViewModel,selected: Int, currentChanged
             Icon(
                 painterResource(id = R.drawable.ic_home_black_24dp),
                 contentDescription = stringResource(id = R.string.main_title_home),
-                tint = if (selected == 0) {
+                tint = if (viewModel.pagerState.currentPage == 0) {
                     Color(viewModel.appColor)
                 } else {
                     LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
@@ -190,7 +196,7 @@ private fun MainBottomBar(viewModel: MainViewModel,selected: Int, currentChanged
             )
             Text(
                 text = stringResource(id = R.string.main_title_home),
-                color = if (selected == 0) {
+                color = if (viewModel.pagerState.currentPage == 0) {
                     Color(viewModel.appColor)
                 } else {
                     LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
@@ -209,7 +215,7 @@ private fun MainBottomBar(viewModel: MainViewModel,selected: Int, currentChanged
             Icon(
                 painterResource(id = R.drawable.ic_baseline_person_24),
                 contentDescription = stringResource(id = R.string.main_title_mine),
-                tint = if (selected == 1) {
+                tint = if (viewModel.pagerState.currentPage == 1) {
                     Color(viewModel.appColor)
                 } else {
                     LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
@@ -217,7 +223,7 @@ private fun MainBottomBar(viewModel: MainViewModel,selected: Int, currentChanged
             )
             Text(
                 text = stringResource(id = R.string.main_title_mine),
-                color = if (selected == 1) {
+                color = if (viewModel.pagerState.currentPage == 1) {
                     Color(viewModel.appColor)
                 } else {
                     LocalContentColor.current.copy(alpha = LocalContentAlpha.current)

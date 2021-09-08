@@ -15,13 +15,13 @@ class Repository ( private val dataHelper: HttpDataHelper ){
      * get TabList
      */
     suspend fun getTabList() = withContext(Dispatchers.IO) {
-        dataHelper.getTabList()
+        dataHelper.getTabList(this)
     }
     /**
      * get MovieList
      */
     suspend fun getMovieList(state :Long = 0L) = withContext(Dispatchers.IO) {
-        dataHelper.getPlayerList(state)
+        dataHelper.getPlayerList(state,this)
     }
 
 

@@ -28,13 +28,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.hh.composeplayer.R
 import com.hh.composeplayer.bean.Model
 import com.hh.composeplayer.ui.viewmodel.MineViewModel
 import com.hh.composeplayer.util.*
-import com.hh.composeplayer.util.CpNavigation.navHostController
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 

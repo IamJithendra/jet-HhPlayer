@@ -18,7 +18,7 @@ import com.hh.composeplayer.logic.Repository
  * @CreateDate: 2021/9/7  11:13
  */
 class MovieListViewModel() : BaseViewModel() {
-    val movieList = MutableLiveData<MutableList<Video>>(ArrayList())
+//    val movieList = MutableLiveData<MutableList<Video>>(ArrayList())
 
     var isShowError by mutableStateOf(false)
 

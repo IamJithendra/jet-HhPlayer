@@ -9,6 +9,8 @@ class Ty() : LitePalSupport(){
     @SerializedName("id")
     var staffId: Long = 0
 
+    var pageId:Int = 0
+
     constructor(content : String) : this() {
         this.content = content
         staffId = 0

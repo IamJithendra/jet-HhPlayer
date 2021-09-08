@@ -4,9 +4,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import com.hh.composeplayer.base.BaseViewModel
 import com.hh.composeplayer.bean.Model
-import com.hh.composeplayer.util.PagerState
 
 /**
  * @ProjectName: HelloComPose
@@ -20,5 +21,6 @@ class MainViewModel : BaseViewModel() {
     /**
      * Pager Number
      */
-    val pagerState = PagerState(maxPage = 2)
+    @OptIn(ExperimentalPagerApi::class)
+    val pagerState = PagerState(pageCount = 2)
 }

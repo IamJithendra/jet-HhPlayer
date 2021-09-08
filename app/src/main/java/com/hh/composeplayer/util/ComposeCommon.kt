@@ -20,6 +20,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.unit.*
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 /**
@@ -49,6 +52,66 @@ fun Modifier.tabIndicatorOffsetH(
     fillMaxWidth()
         .wrapContentSize(Alignment.BottomStart)
         .offset(x = indicatorOffset + ((currentTabPosition.width - currentTabWidth) / 2))
+        .width(currentTabWidth)
+}
+
+@ExperimentalPagerApi
+fun Modifier.pagerTabIndicatorOffsetH(
+    pagerState: PagerState,
+    tabPositions: List<TabPosition>,
+    width: Dp = 1.dp
+): Modifier = composed {
+    // If there are no pages, nothing to show
+    if (pagerState.pageCount == 0) return@composed this
+
+    val targetIndicatorOffset: Dp
+    val indicatorWidth: Dp
+
+    val currentTab = tabPositions[pagerState.currentPage]
+    val targetPage = pagerState.targetPage
+    val targetTab = targetPage?.let { tabPositions.getOrNull(it) }
+
+    if (targetTab != null) {
+        // The distance between the target and current page. If the pager is animating over many
+        // items this could be > 1
+        val targetDistance = (targetPage - pagerState.currentPage).absoluteValue
+        // Our normalized fraction over the target distance
+        val fraction = (pagerState.currentPageOffset / kotlin.math.max(targetDistance, 1)).absoluteValue
+
+        targetIndicatorOffset = lerp(currentTab.left, targetTab.left, fraction)
+        indicatorWidth = lerp(currentTab.width, targetTab.width, fraction).absoluteValue
+    } else {
+        // Otherwise we just use the current tab/page
+        targetIndicatorOffset = currentTab.left
+        indicatorWidth = currentTab.width
+    }
+
+    fillMaxWidth()
+        .wrapContentSize(Alignment.BottomStart)
+        .offset(x = targetIndicatorOffset + ((currentTab.width - width) / 2))
+        .width(width)
+}
+
+private inline val Dp.absoluteValue: Dp
+    get() = value.absoluteValue.dp
+
+
+fun Modifier.ownTabIndicatorOffset(
+    currentTabPosition: TabPosition,
+    currentTabWidth: Dp = currentTabPosition.width
+): Modifier = composed(
+    inspectorInfo = debugInspectorInfo {
+        name = "tabIndicatorOffset"
+        value = currentTabPosition
+    }
+) {
+    val indicatorOffset by animateDpAsState(
+        targetValue = currentTabPosition.left,
+        animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
+    )
+    fillMaxWidth()
+        .wrapContentSize(Alignment.BottomStart)
+//        .offset(x = indicatorOffset + ((currentTabPosition.width - currentTabWidth) / 2))
         .width(currentTabWidth)
 }
 
