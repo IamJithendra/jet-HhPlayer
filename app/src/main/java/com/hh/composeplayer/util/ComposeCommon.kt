@@ -3,11 +3,15 @@ package com.hh.composeplayer.util
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyGridScope
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material.TabPosition
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -53,6 +57,16 @@ fun Modifier.tabIndicatorOffsetH(
         .wrapContentSize(Alignment.BottomStart)
         .offset(x = indicatorOffset + ((currentTabPosition.width - currentTabWidth) / 2))
         .width(currentTabWidth)
+}
+
+@ExperimentalFoundationApi
+inline fun <T> LazyGridScope.itemsH(
+    items: List<T>,
+    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit
+) = items(items.size) {
+    if(items.isNotEmpty()){
+        itemContent(items[it])
+    }
 }
 
 @ExperimentalPagerApi
@@ -111,7 +125,7 @@ fun Modifier.ownTabIndicatorOffset(
     )
     fillMaxWidth()
         .wrapContentSize(Alignment.BottomStart)
-//        .offset(x = indicatorOffset + ((currentTabPosition.width - currentTabWidth) / 2))
+        .offset(x = indicatorOffset + ((currentTabPosition.width - currentTabWidth) / 2))
         .width(currentTabWidth)
 }
 

@@ -5,13 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.hh.composeplayer.bean.ResultState
 import com.hh.composeplayer.bean.paresException
 import com.hh.composeplayer.bean.paresResult
+import com.hh.composeplayer.util.*
 import com.hh.composeplayer.util.http.AppException
 import com.hh.composeplayer.util.http.BaseResponse
 import com.hh.composeplayer.util.http.ExceptionHandle
-import com.hh.composeplayer.util.isShowProgressDialog
-import com.hh.composeplayer.util.ldDismiss
-import com.hh.composeplayer.util.loge
-import com.hh.composeplayer.util.showLd
 import kotlinx.coroutines.*
 
 
@@ -231,7 +228,7 @@ fun <T> BaseViewModel.launch(
     error: (Throwable) -> Unit = {}
 ) {
     viewModelScope.launch {
-        kotlin.runCatching {
+        runCatching {
             withContext(Dispatchers.IO) {
                 block()
             }

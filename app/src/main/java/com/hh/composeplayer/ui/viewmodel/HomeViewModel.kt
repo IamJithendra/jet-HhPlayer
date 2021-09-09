@@ -27,7 +27,7 @@ class HomeViewModel : BaseViewModel() {
      * Pager Number
      */
     @OptIn(ExperimentalPagerApi::class)
-    val pagerState = PagerState(pageCount = 2,currentPage = 0,offscreenLimit = 2)
+    val pagerState = PagerState(pageCount = 2,currentPage = 0,offscreenLimit = 1)
 
     private val repository = Repository(HttpDataHelper())
 

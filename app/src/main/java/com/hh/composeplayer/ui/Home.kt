@@ -6,10 +6,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
@@ -24,13 +26,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.hh.composeplayer.R
@@ -75,105 +78,152 @@ fun Home(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MovieListView(modifier: Modifier = Modifier, homeViewModel: HomeViewModel) {
+    e("HHLog", "MovieListView")
     homeViewModel.pagerState.pageCount = homeViewModel.movieTabList.size
-    HorizontalPager(state = homeViewModel.pagerState,modifier.fillMaxSize()) {page ->
+    HorizontalPager(state = homeViewModel.pagerState, modifier.fillMaxSize()) { page ->
         when (page) {
             homeViewModel.movieTabList[page].pageId -> {
-                HomeContent(modifier, homeViewModel,page)
+                HomeContent(modifier, homeViewModel, page)
             }
         }
     }
 
 }
 
-@OptIn(ExperimentalFoundationApi::class,ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalPagerApi::class)
 @Composable
 private fun HomeContent(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel,
-    page : Int
+    page: Int
 ) {
+    e("HHLog", "HomeContent")
     val viewModel = viewModel(
         modelClass = MovieListViewModel::class.java,
         key = homeViewModel.movieTabList[page].staffId.toString()
     )
-    val movieList = remember {
-        mutableStateListOf<Video>()
-    }
-    LaunchedEffect(homeViewModel.movieTabList[page].staffId) {
-        viewModel.getMovieList(
-            page,
-            homeViewModel.movieTabList[page].staffId
-        ).let {
-            if (it.isNotEmpty()) {
-                movieList.clear()
-                movieList.addAll(it)
-                viewModel.isShowError = false
-            } else {
-                viewModel.isShowError = true
-            }
-        }
-    }
+    val movieList = viewModel.getMovieList(page, homeViewModel.movieTabList[page].staffId)
+        .collectAsLazyPagingItems()
     SwipeRefresh(rememberSwipeRefreshState(viewModel.isRefreshing), {
         viewModel.movieListRefresh(
             page,
-            homeViewModel.movieTabList[page].staffId
+            homeViewModel.movieTabList[page].staffId, movieList
         )
     }) {
-        if (movieList.size == 0) {
-            Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("没有数据")
-            }
-        } else {
-            LazyVerticalGrid(cells = GridCells.Fixed(2), modifier.padding(bottom = 90.dp).fillMaxHeight()) {
-                if (movieList.size > 0) {
-                    items(movieList) {
-                        Row {
+        SwipeRefreshItem(modifier, viewModel, movieList)
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SwipeRefreshItem(
+    modifier: Modifier = Modifier,
+    viewModel: MovieListViewModel,
+    movieList: LazyPagingItems<Video>
+) {
+    e("HHLog", "SwipeRefreshItem")
+    BoxWithConstraints {
+        when (movieList.itemCount) {
+            0 -> {
+                LazyVerticalGrid(
+                    cells = GridCells.Fixed(1),
+                    modifier
+                        .padding(bottom = 90.dp)
+                        .fillMaxSize()
+                ) {
+                    e("HHLog", "LazyGridScope1")
+                    item {
+                        e("HHLog", "LazyGridItemScope1")
+                        if (!boxProgress) {
                             Box(
-                                modifier = modifier
-                                    .weight(1f, fill = true)
-                                    .padding(12.dp)
-                                    .wrapContentHeight()
-                                    .clickable {  viewModel.startCompose(Model.Search) }
-                                ,
-                                propagateMinConstraints = true,
+                                Modifier.height(maxHeight), Alignment.Center
                             ) {
-                                Image(
-                                    painter = rememberCoilPainter(request = it.pic),
-                                    contentDescription = "avater",
-                                    contentScale = ContentScale.FillBounds,
-                                    modifier = modifier.height(200.dp)
-                                )
-                                Text(
-                                    text = it.name!!,
-                                    modifier
-                                        .height(40.dp)
-                                        .background(
-                                            colorResource(id = R.color.translucent_5)
-                                        )
-                                        .padding(top = 10.dp)
-                                        .align(Alignment.BottomCenter),
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 13.sp,
-                                    color = Color.White,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontStyle = FontStyle.Italic,
-                                    fontWeight = FontWeight.Medium,
-                                    textDecoration = TextDecoration.None
-                                )
+                                Text(stringResource(R.string.no_data))
                             }
                         }
                     }
                 }
-                else{
-                    item {
-                        Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("没有数据")
+            }
+            else -> {
+                LazyVerticalGrid(
+                    cells = GridCells.Fixed(2),
+                    modifier
+                        .padding(bottom = 90.dp)
+                        .fillMaxSize()
+                ) {
+                    e("HHLog", "LazyGridScope2")
+                    items(movieList.itemCount) {
+                        e("HHLog", "LazyGridItemScope2")
+                        Card(
+                            modifier = modifier
+                                .padding(12.dp)
+                                .wrapContentHeight()
+                                .clickable { viewModel.startCompose(Model.Search) },
+                            shape = RoundedCornerShape(8.dp),
+                            elevation = 5.dp
+                        ) {
+                            Box(
+                                modifier = Modifier.height(IntrinsicSize.Max),
+                                propagateMinConstraints = true//传入的最小约束是否应传递给内容。
+                            ) {
+                                Image(
+                                    painter = rememberCoilPainter(request = movieList[it]!!.pic),
+                                    contentDescription = "Avatar",
+                                    contentScale = ContentScale.FillBounds,
+                                    modifier = modifier.height(200.dp)
+                                )
+                                //拉渐变
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(
+                                            brush = Brush.verticalGradient(
+                                                colors = listOf(
+                                                    Color.Transparent,
+                                                    colorResource(id = R.color.font_primary)
+                                                ),
+                                                startY = 400f//数据越大黑色越少
+                                            )
+                                        )
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.BottomStart
+                                )
+                                {
+                                    Text(
+                                        text = movieList[it]!!.name!!,
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 13.sp,
+                                        color = Color.White,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontStyle = FontStyle.Italic,
+                                        fontWeight = FontWeight.Medium,
+                                        textDecoration = TextDecoration.None
+                                    )
+                                }
+                            }
                         }
+                        boxProgress = false
                     }
                 }
             }
+//
+//                boxProgress = false
+//            } else {
+//                item {
+//                    if (!boxProgress) {
+//                        Box(
+//                            Modifier.height(maxHeight), Alignment.Center
+//                        ) {
+//                            Text(stringResource(R.string.no_data))
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 }
@@ -214,7 +264,7 @@ private fun MovieTabLayout(modifier: Modifier = Modifier, viewModel: HomeViewMod
                     TabRowDefaults.Indicator(
                         modifier.pagerTabIndicatorOffsetH(
                             viewModel.pagerState,
-                            it,viewModel.mainTopTabTextWidthList[viewModel.pagerState.currentPage]
+                            it, viewModel.mainTopTabTextWidthList[viewModel.pagerState.currentPage]
                         ),
                         2.dp,
                         Color(viewModel.appColor)

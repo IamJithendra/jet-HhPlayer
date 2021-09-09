@@ -1,11 +1,8 @@
 package com.hh.composeplayer
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -13,15 +10,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,28 +22,17 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.gson.Gson
 import com.hh.composeplayer.base.BaseActivity
-import com.hh.composeplayer.base.parseState
-import com.hh.composeplayer.bean.Jsons
 import com.hh.composeplayer.bean.Model
-import com.hh.composeplayer.bean.ResultState
 import com.hh.composeplayer.ui.*
 import com.hh.composeplayer.ui.theme.HelloComPoseTheme
 import com.hh.composeplayer.util.*
 import kotlinx.coroutines.launch
-import com.hh.composeplayer.ui.viewmodel.HomeViewModel
-import com.hh.composeplayer.ui.viewmodel.SearchViewModel
-import com.hh.composeplayer.ui.viewmodel.SettingViewModel
-import com.hh.composeplayer.util.CpNavigation.backAndReturnsIsLastPage
 import com.hh.composeplayer.util.CpNavigation.navHostController
 import com.hh.composeplayer.util.Mylog.e
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.withContext
 
 class MainActivity : BaseActivity<MainViewModel>() {
     var exitTime = 0L
@@ -73,11 +55,11 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
                 override fun onDenied(denied: List<String>, never: Boolean) {
                     if (never) {
-                        Toast.makeText(this@MainActivity, "被永久拒绝授权，请手动授予存储权限", Toast.LENGTH_SHORT).show()
+                        showToast("被永久拒绝授权，请手动授予存储权限")
                         // 如果是被永久拒绝就跳转到应用权限系统设置页面
                         XXPermissions.startPermissionActivity(this@MainActivity, denied)
                     } else {
-                        Toast.makeText(this@MainActivity, "获取存储权限失败", Toast.LENGTH_SHORT).show()
+                        showToast("获取存储权限失败")
                     }
                     e("HHLog","onDenied")
                     setContent {
@@ -131,7 +113,7 @@ private fun Scaffold(viewModel: MainViewModel) {
                     }
                 }
             },
-            content = { innerPadding ->
+            content = {
                 NavHost(navController = navHostController, startDestination = Model.Main.name) {
 //                    when (CpNavigation.currentScreen) {
                         //当前需要展示首页/列表页
@@ -159,7 +141,7 @@ private fun Scaffold(viewModel: MainViewModel) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel) {
-    HorizontalPager(state = viewModel.pagerState, modifier.fillMaxSize()) {page->
+    HorizontalPager(state = viewModel.pagerState, modifier.fillMaxSize(),dragEnabled = false) {page->
         when (page) {
             0 -> {
                 e("HHLog","MainContentHome")

@@ -4,11 +4,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hh.composeplayer.base.BaseViewModel
 import com.hh.composeplayer.base.launch
 import com.hh.composeplayer.bean.Video
 import com.hh.composeplayer.logic.HttpDataHelper
 import com.hh.composeplayer.logic.Repository
+import com.hh.composeplayer.util.Mylog
+import com.hh.composeplayer.util.boxProgress
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.launch
 
 /**
  * @ProjectName: HelloComPose
@@ -19,30 +31,33 @@ import com.hh.composeplayer.logic.Repository
  */
 class MovieListViewModel() : BaseViewModel() {
 //    val movieList = MutableLiveData<MutableList<Video>>(ArrayList())
-
     var isShowError by mutableStateOf(false)
 
     // 下拉刷新状态
     var isRefreshing by mutableStateOf(false)
 
+    private val pageSize = 20
+
     private val repository = Repository(HttpDataHelper())
 
-    suspend fun getMovieList(state : Int,id:Long) : List<Video>{
+    fun getMovieList(state : Int,id:Long) : Flow<PagingData<Video>> {
         return  if(state == 0){
-            repository.getMovieList()
+            repository.getMoviePagingData(id,pageSize).cachedIn(viewModelScope)
         } else{
-            repository.getMovieList(id)
+            repository.getMoviePagingData(id,pageSize).cachedIn(viewModelScope)
         }
     }
 
-    fun movieListRefresh(state : Int,id:Long){
+    fun movieListRefresh(state : Int,id:Long,mutableList: LazyPagingItems<Video>){
         launch({
             isRefreshing = true
+            boxProgress = true
             getMovieList(state,id)
         },{
             isRefreshing = false
         },{
             isRefreshing = false
+            boxProgress = false
             showToast(it.toString())
         })
     }
