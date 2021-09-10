@@ -8,6 +8,7 @@ import com.hh.composeplayer.bean.Jsons
 import com.hh.composeplayer.bean.MovieBean
 import com.hh.composeplayer.bean.Ty
 import com.hh.composeplayer.bean.Video
+import com.hh.composeplayer.util.Mylog
 import com.hh.composeplayer.util.boxProgress
 import com.hh.composeplayer.util.xmlToJson
 import kotlinx.coroutines.CoroutineScope
@@ -55,6 +56,7 @@ class HttpDataHelper {
 
     suspend fun getPlayerList(state: Long, page : Int, coroutineScope: CoroutineScope):List<Video> {
         val movieList: MutableList<Video> = ArrayList()
+        Mylog.e("HHLog", "getPlayerList$state and $page")
         val job = coroutineScope.async(IO) {
 //            runCatching {
 //                boxProgress = true

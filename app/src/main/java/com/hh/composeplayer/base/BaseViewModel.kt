@@ -47,6 +47,10 @@ abstract class BaseViewModel : ViewModel(), LifecycleObserver {
         UIChangeLiveData.onBackPressedEvent.call()
     }
 
+    fun onExit(){
+        UIChangeLiveData.appExitEvent.call()
+    }
+
     override fun onCleared() {
         super.onCleared()
         //ViewModel销毁时会执行，同时取消所有异步任务

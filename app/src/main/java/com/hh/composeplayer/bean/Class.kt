@@ -4,5 +4,5 @@ import org.litepal.crud.LitePalSupport
 
 class Class : LitePalSupport(){
     var id : Int ? = 1
-    var ty: List<Ty>? = null
+    var ty: MutableList<Ty>? = null
 }

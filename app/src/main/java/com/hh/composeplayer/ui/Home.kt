@@ -44,7 +44,11 @@ import com.hh.composeplayer.ui.viewmodel.HomeViewModel
 import com.hh.composeplayer.ui.viewmodel.MovieListViewModel
 import com.hh.composeplayer.util.*
 import com.hh.composeplayer.util.Mylog.e
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.litepal.LitePal
+import org.litepal.extension.findAll
 
 /**
  * @ProjectName: HelloComPose
@@ -68,9 +72,8 @@ fun Home(modifier: Modifier = Modifier) {
     Column(modifier.fillMaxSize()) {
         MainToolBar(modifier, homeViewModel)
         MovieTabLayout(modifier, homeViewModel)
-        if (homeViewModel.movieTabList.size > 0) {
-            MovieListView(homeViewModel = homeViewModel)
-        }
+        e("HHLog", "movieTabList"+homeViewModel.movieTabList.size)
+        MovieListView(homeViewModel = homeViewModel)
     }
     BoxProgress()
 }
@@ -105,12 +108,10 @@ private fun HomeContent(
     val movieList = viewModel.getMovieList(page, homeViewModel.movieTabList[page].staffId)
         .collectAsLazyPagingItems()
     SwipeRefresh(rememberSwipeRefreshState(viewModel.isRefreshing), {
-        viewModel.movieListRefresh(
-            page,
-            homeViewModel.movieTabList[page].staffId, movieList
-        )
+        e("HHLog", "rememberSwipeRefreshState")
+        movieList.refresh()
     }) {
-        SwipeRefreshItem(modifier, viewModel, movieList)
+        SwipeRefreshItem(modifier, viewModel, movieList, movieList.itemCount)
     }
 }
 
@@ -119,11 +120,12 @@ private fun HomeContent(
 fun SwipeRefreshItem(
     modifier: Modifier = Modifier,
     viewModel: MovieListViewModel,
-    movieList: LazyPagingItems<Video>
+    movieList: LazyPagingItems<Video>,
+    itemCount : Int
 ) {
-    e("HHLog", "SwipeRefreshItem")
+    e("HHLog", "SwipeRefreshItem$itemCount")
     BoxWithConstraints {
-        when (movieList.itemCount) {
+        when (itemCount) {
             0 -> {
                 LazyVerticalGrid(
                     cells = GridCells.Fixed(1),
@@ -131,9 +133,9 @@ fun SwipeRefreshItem(
                         .padding(bottom = 90.dp)
                         .fillMaxSize()
                 ) {
-                    e("HHLog", "LazyGridScope1")
+                    e("HHLog", "LazyGridScope1------$viewModel")
                     item {
-                        e("HHLog", "LazyGridItemScope1")
+                        e("HHLog", "LazyGridItemScope1$viewModel")
                         if (!boxProgress) {
                             Box(
                                 Modifier.height(maxHeight), Alignment.Center
@@ -151,9 +153,9 @@ fun SwipeRefreshItem(
                         .padding(bottom = 90.dp)
                         .fillMaxSize()
                 ) {
-                    e("HHLog", "LazyGridScope2")
+                    e("HHLog", "LazyGridScope2$viewModel")
                     items(movieList.itemCount) {
-                        e("HHLog", "LazyGridItemScope2")
+                        e("HHLog", "LazyGridItemScope2$viewModel")
                         Card(
                             modifier = modifier
                                 .padding(12.dp)

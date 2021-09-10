@@ -34,9 +34,11 @@ import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.TopAppBar
 import com.hh.composeplayer.R
 import com.hh.composeplayer.ui.viewmodel.SettingViewModel
+import com.hh.composeplayer.util.CacheDataManager
 import com.hh.composeplayer.util.ColorUtil.ACCENT_COLORS
 import com.hh.composeplayer.util.ColorUtil.PRIMARY_COLORS_SUB
 import com.hh.composeplayer.util.SettingUtil
+import com.hh.composeplayer.util.showMessage
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,8 +61,10 @@ fun CpSetting(modifier: Modifier = Modifier){
         LaunchedEffect("settingViewModel"){
             withContext(IO){
                 it.appColor = SettingUtil.getColor()
+                it.caCheSize = CacheDataManager.getTotalCacheSize(content)
             }
         }
+
     }
     Column {
         SettingTopBar(modifier,settingViewModel)
@@ -69,15 +73,39 @@ fun CpSetting(modifier: Modifier = Modifier){
             fontSize = 13.sp,modifier = modifier.padding(15.dp))
         Column(
             modifier
+                .fillMaxWidth()
+                .clickable {
+                    lifecycleCoroutineScope.launch {
+                        content.showMessage(
+                        "确定清理缓存吗",
+                        positiveButtonText = "清理",
+                        negativeButtonText = "取消",
+                        positiveAction = {
+                            CacheDataManager.clearAllCache(content)
+                            settingViewModel.caCheSize = CacheDataManager.getTotalCacheSize(content)
+                        })
+                    }
+                }
                 .padding(15.dp)
-                .clickable { }) {
+                ) {
             Text(stringResource(R.string.setting_clear_cache),color = colorResource(R.color.text_color),fontSize = 15.sp)
-            Text(settingViewModel.caCheSize.toString(),color = colorResource(R.color.forum_inactive_color),fontSize = 14.sp)
+            Text(settingViewModel.caCheSize,color = colorResource(R.color.forum_inactive_color),fontSize = 14.sp)
         }
         Column(
             modifier
-                .padding(15.dp)
-                .clickable { }) {
+                .fillMaxWidth()
+                .clickable {
+                    lifecycleCoroutineScope.launch {
+                        content.showMessage(
+                            "确定要退出程序吗",
+                            positiveButtonText = "退出",
+                            negativeButtonText = "取消",
+                            positiveAction = {
+                                settingViewModel.onExit()
+                            })
+                    }
+                }
+                .padding(15.dp)) {
             Text(stringResource(R.string.exit),color = colorResource(R.color.text_color),fontSize = 15.sp)
             Text(stringResource(R.string.exit_app),color = colorResource(R.color.forum_inactive_color),fontSize = 14.sp)
         }

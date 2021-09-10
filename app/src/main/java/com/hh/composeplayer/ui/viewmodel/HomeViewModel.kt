@@ -10,6 +10,8 @@ import com.hh.composeplayer.bean.*
 import com.hh.composeplayer.logic.HttpDataHelper
 import com.hh.composeplayer.logic.Repository
 import com.hh.composeplayer.util.boxProgress
+import org.litepal.LitePal
+import org.litepal.extension.findAll
 
 /**
  * @ProjectName: HelloComPose
@@ -23,6 +25,12 @@ class HomeViewModel : BaseViewModel() {
 
     val movieTabList = mutableStateListOf<Ty>()
 
+    init {
+        movieTabList.addAll(LitePal.findAll<Ty>())
+        if(movieTabList.size!=0){
+            movieTabList.add(0,Ty("最新"))
+        }
+    }
     /**
      * Pager Number
      */

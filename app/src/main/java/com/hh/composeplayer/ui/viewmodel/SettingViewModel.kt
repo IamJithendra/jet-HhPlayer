@@ -13,5 +13,5 @@ import com.hh.composeplayer.base.BaseViewModel
  * @CreateDate: 2021/9/2  9:54
  */
 class SettingViewModel : BaseViewModel(){
-    var caCheSize by mutableStateOf(0.0)
+    var caCheSize by mutableStateOf("0.0MB")
 }

@@ -15,12 +15,12 @@ import com.hh.composeplayer.bean.Video
 import com.hh.composeplayer.logic.HttpDataHelper
 import com.hh.composeplayer.logic.Repository
 import com.hh.composeplayer.util.Mylog
+import com.hh.composeplayer.util.Mylog.e
 import com.hh.composeplayer.util.boxProgress
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * @ProjectName: HelloComPose
@@ -48,13 +48,14 @@ class MovieListViewModel() : BaseViewModel() {
         }
     }
 
-    fun movieListRefresh(state : Int,id:Long,mutableList: LazyPagingItems<Video>){
+    fun movieListRefresh(state : Int,id:Long){
         launch({
             isRefreshing = true
             boxProgress = true
             getMovieList(state,id)
         },{
             isRefreshing = false
+            boxProgress = false
         },{
             isRefreshing = false
             boxProgress = false
