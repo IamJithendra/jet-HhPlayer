@@ -6,10 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -66,7 +63,7 @@ fun CpSetting(modifier: Modifier = Modifier){
         }
 
     }
-    Column {
+    Column (modifier.fillMaxSize()){
         SettingTopBar(modifier,settingViewModel)
         Text(stringResource(R.string.setting_basic_text),
             color = Color(settingViewModel.appColor),

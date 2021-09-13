@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,18 +64,19 @@ fun Home(modifier: Modifier = Modifier) {
     e("HHLog", "Home")
     val homeViewModel: HomeViewModel = viewModel()
     homeViewModel.let {
-        if (it.movieTabList.size == 0) {
-            homeViewModel.getMovieTabList()
-        }
         LaunchedEffect(homeViewModel) {
             it.appColor = SettingUtil.getColor()
+            if (it.movieTabList.size == 0) {
+                boxProgress = true
+                homeViewModel.getMovieTabList()
+            }
         }
     }
     Column(modifier.fillMaxSize()) {
-        MainToolBar(modifier, homeViewModel)
-        MovieTabLayout(modifier, homeViewModel)
-        e("HHLog", "movieTabList"+homeViewModel.movieTabList.size)
-        MovieListView(homeViewModel = homeViewModel)
+            MainToolBar(modifier, homeViewModel)
+            MovieTabLayout(modifier, homeViewModel)
+            e("HHLog", "movieTabList"+homeViewModel.movieTabList.size)
+            MovieListView(homeViewModel = homeViewModel)
     }
     BoxProgress()
 }
@@ -90,7 +93,6 @@ fun MovieListView(modifier: Modifier = Modifier, homeViewModel: HomeViewModel) {
             }
         }
     }
-
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPagerApi::class)
@@ -130,7 +132,6 @@ fun SwipeRefreshItem(
                 LazyVerticalGrid(
                     cells = GridCells.Fixed(1),
                     modifier
-                        .padding(bottom = 90.dp)
                         .fillMaxSize()
                 ) {
                     e("HHLog", "LazyGridScope1------$viewModel")
@@ -150,7 +151,6 @@ fun SwipeRefreshItem(
                 LazyVerticalGrid(
                     cells = GridCells.Fixed(2),
                     modifier
-                        .padding(bottom = 90.dp)
                         .fillMaxSize()
                 ) {
                     e("HHLog", "LazyGridScope2$viewModel")
@@ -213,19 +213,6 @@ fun SwipeRefreshItem(
                     }
                 }
             }
-//
-//                boxProgress = false
-//            } else {
-//                item {
-//                    if (!boxProgress) {
-//                        Box(
-//                            Modifier.height(maxHeight), Alignment.Center
-//                        ) {
-//                            Text(stringResource(R.string.no_data))
-//                        }
-//                    }
-//                }
-//            }
         }
     }
 }
@@ -239,6 +226,16 @@ private fun MainToolBar(modifier: Modifier = Modifier, viewModel: HomeViewModel)
         backgroundColor = Color(viewModel.appColor),
         contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars),
         actions = {
+            if(viewModel.isShowError){
+                IconButton(onClick = {
+                    viewModel.getMovieTabList()
+                }) {
+                    Icon(
+                        Icons.Filled.Refresh, contentDescription = "refresh",
+                        tint = Color.White
+                    )
+                }
+            }
             IconButton(onClick = {
                 viewModel.startCompose(Model.Search)
             }) {

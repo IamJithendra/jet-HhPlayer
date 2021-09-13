@@ -9,6 +9,7 @@
     <string name="search_history">搜索历史</string>
     <string name="close">清空</string>
     <string name="no_data">没有数据</string>
+    <string name="refresh_data">重新加载</string>
     <string name="setting_basic_text">基本设置</string>
     <string name="setting_other_text">其他设置</string>
     <string name="setting_clear_cache">清除缓存</string>

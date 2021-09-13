@@ -30,9 +30,6 @@ fun String.loge(tag: String = TAG) =
 
 @SuppressLint("SimpleDateFormat")
 object Mylog {
-
-    val CACHE_DIR_NAME = "hhlib/testlib"
-
     private val ISRELESE = BuildConfig.DEBUG
     private var isDebugModel = ISRELESE// 是否输出日志
     private var isSaveDebugInfo = ISRELESE// 是否保存调试日志
@@ -45,8 +42,8 @@ object Mylog {
      */
     val file: String
         get() {
-            var sdDir: File? = HhCpApp.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            val cacheDir = File(sdDir.toString() + "/zngj")
+            val sdDir: File? = HhCpApp.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val cacheDir = File(sdDir.toString() + "/log")
             if (!cacheDir.exists())
                 cacheDir.mkdir()
 

@@ -1,6 +1,9 @@
 package com.hh.composeplayer.ui.viewmodel
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
@@ -9,7 +12,9 @@ import com.hh.composeplayer.base.launch
 import com.hh.composeplayer.bean.*
 import com.hh.composeplayer.logic.HttpDataHelper
 import com.hh.composeplayer.logic.Repository
+import com.hh.composeplayer.util.Mylog
 import com.hh.composeplayer.util.boxProgress
+import kotlinx.coroutines.delay
 import org.litepal.LitePal
 import org.litepal.extension.findAll
 
@@ -24,6 +29,8 @@ class HomeViewModel : BaseViewModel() {
     val mainTopTabTextWidthList = mutableStateListOf<Dp>() //标题长度
 
     val movieTabList = mutableStateListOf<Ty>()
+
+    var isShowError by mutableStateOf(false)
 
     init {
         movieTabList.addAll(LitePal.findAll<Ty>())
@@ -42,12 +49,17 @@ class HomeViewModel : BaseViewModel() {
     fun getMovieTabList(){
         launch({
             boxProgress = true
+            isShowError = false
             // 刷新任务执行
             movieTabList.addAll(repository.getTabList())
         },{
             boxProgress = false
+            Mylog.e("HHLog", "getMovieTabListSuccess")
+            isShowError = false
         },{
             boxProgress = false
+            Mylog.e("HHLog", "getMovieTabListError"+it.message)
+            isShowError = true
         }
         )
 

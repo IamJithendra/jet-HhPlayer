@@ -7,9 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
@@ -25,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -58,34 +57,36 @@ import kotlinx.coroutines.withContext
             .background(Color(0xFFF8F9FB)),
     ) {
         MineTopAvater()
-        Column(
-            modifier
-                .padding(start = 20.dp, end = 20.dp)
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.White)
-        ){
-            MineItem(modifier,mineViewModel,stringResource(R.string.main_mine_start),
-                Icons.Filled.Star){ mineViewModel.startCompose(Model.Start) }
-            Divider(modifier = modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp))
-            MineItem(modifier,mineViewModel,stringResource(R.string.main_mine_collect),
-                Icons.Filled.Favorite){ mineViewModel.startCompose(Model.Collect) }
-            Divider(modifier = modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp))
-            MineItem(modifier ,mineViewModel,stringResource(R.string.main_mine_setting),
-                Icons.Filled.Settings){
-                mineViewModel.startCompose(Model.Setting)
+        Surface(
+            modifier.padding(start = 20.dp, end = 20.dp)
+            .fillMaxWidth().background(Color.White),
+            elevation = 2.dp,
+            shape = RoundedCornerShape(8.dp),
+//            contentColor = Color.White,
+            color = MaterialTheme.colors.surface, // color will be adjusted for elevation
+        ) {
+            Column{
+                MineItem(modifier,mineViewModel,stringResource(R.string.main_mine_start),
+                    Icons.Filled.Star){ mineViewModel.startCompose(Model.Start) }
+                Divider(modifier = modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 10.dp))
+                MineItem(modifier,mineViewModel,stringResource(R.string.main_mine_collect),
+                    Icons.Filled.Favorite){ mineViewModel.startCompose(Model.Collect) }
+                Divider(modifier = modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 10.dp))
+                MineItem(modifier ,mineViewModel,stringResource(R.string.main_mine_setting),
+                    Icons.Filled.Settings){
+                    mineViewModel.startCompose(Model.Setting)
+                }
+                Divider(modifier = modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 10.dp))
+                MineItem(modifier ,mineViewModel,stringResource(R.string.main_mine_about),
+                    Icons.Filled.AccountCircle
+                ) { mineViewModel.startCompose(Model.About) }
             }
-            Divider(modifier = modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp))
-            MineItem(modifier ,mineViewModel,stringResource(R.string.main_mine_about),
-                Icons.Filled.AccountCircle
-            ) { mineViewModel.startCompose(Model.About) }
         }
     }
 }
@@ -108,7 +109,7 @@ fun MineItem(modifier: Modifier = Modifier,viewModel: MineViewModel,
                 .size(28.dp)
                 .padding(start = 10.dp), Color(viewModel.appColor)
         )
-        Text(textName, modifier.padding(start = 10.dp))
+        Text(textName, modifier.padding(start = 10.dp),fontSize = 14.sp,fontFamily = FontFamily.Serif)
         Icon(
             Icons.Filled.KeyboardArrowRight,textName,
             modifier
