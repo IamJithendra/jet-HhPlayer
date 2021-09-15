@@ -1,10 +1,11 @@
-package com.hh.composeplayer.api.converter;
+package com.hh.composeplayer.api.converter
 
-import com.alibaba.fastjson.JSON;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import okhttp3.ResponseBody;
-import retrofit2.Converter;
+import okhttp3.ResponseBody
+import kotlin.Throws
+import com.alibaba.fastjson.JSON
+import retrofit2.Converter
+import java.io.IOException
+import java.lang.reflect.Type
 
 /**
  * @ProjectName: ZngjMvvM
@@ -13,43 +14,12 @@ import retrofit2.Converter;
  * @Author: huanghai
  * @CreateDate: 2021/1/15  10:29
  */
-final class FastJsonResponseBodyConvert<T> implements Converter<ResponseBody, T> {
-
-    private Type type;
-
-    public FastJsonResponseBodyConvert(Type type) {
-        this.type = type;
-    }
-
-    @Override
-    public T convert(ResponseBody value) throws IOException {
-        String s = value.string();
-//        try {
-//            JSONObject jsonObject = new JSONObject(s);
-//            if (jsonObject.optInt("code") == 401 || jsonObject.optString("message").equals("Unauthorized")) {
-//                if (AppManager.getAppManager().getContextToken() != null) {
-//                    if(AppManager.getAppManager().getContextToken() instanceof BaseActivity){
-//                        Intent intent = new Intent(AppManager.getAppManager().getContextToken(), LoginActivityVMK.class);
-//                        intent.putExtra("isfalg", false);
-//                        ((Activity)AppManager.getAppManager().getContextToken()).startActivityForResult(intent, Extra.ISLOGINCODE);
-//                    }
-//                    else if(AppManager.getAppManager().getContextToken() instanceof BaseActivity){
-//                        Intent intent = new Intent(AppManager.getAppManager().getContextToken(), LoginActivityVMK.class);
-//                        intent.putExtra("isfalg", false);
-//                        ((Activity)AppManager.getAppManager().getContextToken()).startActivityForResult(intent, Extra.ISLOGINCODE);
-//                    }
-//                }
-//                return null;
-//            } else {
-//                return JSON.parseObject(s, type);
-//            }
-//        } catch (JSONException e) {
-//            return JSON.parseObject(s, type);
-//        }
-        if("class java.lang.Object".equals(type.toString())){
-           return (T)s;
-        }
-
-        return JSON.parseObject(s, type);
+internal class FastJsonResponseBodyConvert<T>(private val type: Type) : Converter<ResponseBody, T> {
+    @Throws(IOException::class)
+    override fun convert(value: ResponseBody): T {
+        val s = value.string()
+        return if ("class java.lang.Object" == type.toString()) {
+            s as T
+        } else JSON.parseObject(s, type)
     }
 }

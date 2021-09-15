@@ -36,7 +36,7 @@ class HhCpApp : Application(){
         initRetrofit("")
     }
 
-    fun initRetrofit(token: String): OkHttpClient {
+    private fun initRetrofit(token: String): OkHttpClient {
         //请求头
         val headerInterceptor = Interceptor { chain: Interceptor.Chain ->
             val orignaRequest = chain.request()

@@ -1,14 +1,13 @@
-package com.hh.composeplayer.api.converter;
+package com.hh.composeplayer.api.converter
 
-import com.alibaba.fastjson.serializer.SerializeConfig;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Converter;
-import retrofit2.Retrofit;
+import com.alibaba.fastjson.serializer.SerializeConfig
+import retrofit2.Retrofit
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
+import kotlin.jvm.JvmOverloads
+import retrofit2.Converter
+import java.lang.NullPointerException
+import java.lang.reflect.Type
 
 /**
  * @ProjectName: ZngjMvvM
@@ -17,31 +16,35 @@ import retrofit2.Retrofit;
  * @Author: huanghai
  * @CreateDate: 2021/1/15  10:28
  */
-public class FastJsonConverterFactory extends Converter.Factory {
-
-    private final SerializeConfig serializeConfig;
-
-    private FastJsonConverterFactory(SerializeConfig serializeConfig) {
-        if (serializeConfig == null)
-            throw new NullPointerException("serializeConfig == null");
-        this.serializeConfig = serializeConfig;
+class FastJsonConverterFactory private constructor(serializeConfig: SerializeConfig?) :
+    Converter.Factory() {
+    private val serializeConfig: SerializeConfig
+    override fun requestBodyConverter(
+        type: Type,
+        parameterAnnotations: Array<Annotation>,
+        methodAnnotations: Array<Annotation>,
+        retrofit: Retrofit
+    ): Converter<*, RequestBody> {
+        return FastJsonRequestBodyConverter<Any>(serializeConfig)
     }
 
-    public static FastJsonConverterFactory create() {
-        return create(SerializeConfig.getGlobalInstance());
+    override fun responseBodyConverter(
+        type: Type,
+        annotations: Array<Annotation>,
+        retrofit: Retrofit
+    ): Converter<ResponseBody, *> {
+        return FastJsonResponseBodyConvert<Any>(type)
     }
 
-    public static FastJsonConverterFactory create(SerializeConfig serializeConfig) {
-        return new FastJsonConverterFactory(serializeConfig);
+    companion object {
+        @JvmOverloads
+        fun create(serializeConfig: SerializeConfig? = SerializeConfig.getGlobalInstance()): FastJsonConverterFactory {
+            return FastJsonConverterFactory(serializeConfig)
+        }
     }
 
-    @Override
-    public Converter<?, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
-        return new FastJsonRequestBodyConverter<>(serializeConfig);
-    }
-
-    @Override
-    public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-        return new FastJsonResponseBodyConvert<>(type);
+    init {
+        if (serializeConfig == null) throw NullPointerException("serializeConfig == null")
+        this.serializeConfig = serializeConfig
     }
 }

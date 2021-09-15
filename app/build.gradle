@@ -2,7 +2,9 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
 }
-
+static def releaseTime() {
+    return new Date().format("yyyyMMddhhmm", TimeZone.getTimeZone("UTC"))
+}
 android {
     compileSdk 30
 
@@ -13,6 +15,7 @@ android {
         compileSdkVersion 31
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -21,7 +24,16 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            //是否移除无用资源
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "HHPLAYER_code_${variant.versionCode}_V${variant.versionName}_${releaseTime()}_${buildType.name}.apk"
+                }
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

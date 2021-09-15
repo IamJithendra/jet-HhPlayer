@@ -21,7 +21,7 @@ object SettingUtil {
      * 获取当前主题颜色
      */
     suspend fun getColor(): Int {
-        return DataStorePreference.getIntValue("color",Color.parseColor("#2196F3"))
+        return DataStorePreference.getIntValue("color",Color.parseColor("#4A148C"))
     }
 //
     /**

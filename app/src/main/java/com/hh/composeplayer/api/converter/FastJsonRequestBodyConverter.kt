@@ -1,13 +1,13 @@
-package com.hh.composeplayer.api.converter;
+package com.hh.composeplayer.api.converter
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-
-import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import retrofit2.Converter;
+import com.alibaba.fastjson.serializer.SerializeConfig
+import okhttp3.RequestBody
+import kotlin.Throws
+import com.alibaba.fastjson.JSON
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.Converter
+import java.io.IOException
 
 /**
  * @ProjectName: ZngjMvvM
@@ -16,18 +16,15 @@ import retrofit2.Converter;
  * @Author: huanghai
  * @CreateDate: 2021/1/15  10:28
  */
-final class FastJsonRequestBodyConverter<T> implements Converter<T, RequestBody> {
-
-    private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
-
-    private SerializeConfig serializeConfig;
-
-    public FastJsonRequestBodyConverter(SerializeConfig serializeConfig) {
-        this.serializeConfig = serializeConfig;
+internal class FastJsonRequestBodyConverter<T>(private val serializeConfig: SerializeConfig) :
+    Converter<T, RequestBody> {
+    @Throws(IOException::class)
+    override fun convert(value: T): RequestBody {
+        return RequestBody.create(MEDIA_TYPE, JSON.toJSONBytes(value, serializeConfig))
     }
 
-    @Override
-    public RequestBody convert(T value) throws IOException {
-        return RequestBody.create(MEDIA_TYPE, JSON.toJSONBytes(value, serializeConfig));
+    companion object {
+        private val MEDIA_TYPE: MediaType = "application/json; charset=UTF-8".toMediaType()
     }
+
 }
