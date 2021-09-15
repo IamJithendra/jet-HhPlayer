@@ -1,8 +1,8 @@
 package com.hh.composeplayer.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -10,14 +10,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.runtime.*
 import com.google.accompanist.insets.ui.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -25,12 +25,19 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.WhichButton
+import com.afollestad.materialdialogs.actions.getActionButton
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.hh.composeplayer.R
 import com.hh.composeplayer.ui.viewmodel.SearchViewModel
+import com.hh.composeplayer.util.Mylog
 import com.hh.composeplayer.util.SettingUtil
+import com.hh.composeplayer.util.stringResource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -42,6 +49,7 @@ import kotlinx.coroutines.withContext
  */
 @Composable
 fun SearchView(modifier: Modifier = Modifier) {
+    Mylog.e("HHLog", "SearchView")
     val searchViewModel : SearchViewModel = viewModel()
     searchViewModel.let {
         LaunchedEffect("searchViewModel"){
@@ -50,33 +58,92 @@ fun SearchView(modifier: Modifier = Modifier) {
             }
         }
     }
-    Column{
+    Column(modifier.fillMaxSize()){
         SearchTopBar(modifier,searchViewModel)
         SearchContent(modifier,searchViewModel)
+    }
+    LaunchedEffect(searchViewModel){
+        searchViewModel.getHistoryData()
     }
 }
 
 @Composable
 fun SearchContent(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
-    val itemList by viewModel.historyData.observeAsState()
-    LazyColumn(modifier.fillMaxSize()){
-        itemList?.let {
-            items(it){
+    Mylog.e("HHLog", "SearchContent")
+    val itemsList = viewModel.historyDataState
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    Column{
+        Row(
+            modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp)
+            ,verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.search_history),
+                fontSize = 16.sp,color = Color(viewModel.appColor),
+                modifier = modifier.padding(start = 12.dp)
+            )
+            Text(
+                stringResource(id = R.string.close),
+                color = colorResource(id = R.color.colorBlack666),
+                fontSize = 14.sp,
+                modifier = modifier
+                    .weight(1f)
+                    .wrapContentWidth(Alignment.End)
+                    .padding(end = 12.dp)
+                    .clickable {
+                        MaterialDialog(context)
+                            .lifecycleOwner(lifecycleOwner)
+                            .cancelable(false)
+                            .show {
+                                title(text = context.stringResource(R.string.tips))
+                                message(text = context.stringResource(R.string.confirm_want_clear))
+                                negativeButton(text = context.stringResource(R.string.cancel))
+                                positiveButton(text = context.stringResource(R.string.close)) {
+                                    //清空
+                                    viewModel.clearHistoryData()
+                                }
+                                coroutineScope.launch {
+                                    getActionButton(WhichButton.POSITIVE).updateTextColor(
+                                        SettingUtil.getColor()
+                                    )
+                                    getActionButton(WhichButton.NEGATIVE).updateTextColor(
+                                        SettingUtil.getColor()
+                                    )
+                                }
+                            }
+                    }
+            )
+        }
+        LazyColumn(modifier.fillMaxSize().padding(top = 10.dp)){
+            items(itemsList){
                 Row(
                     modifier
                         .fillMaxWidth()
-                        .padding(top = 10.dp),verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.search_history),
-                        fontSize = 16.sp,color = Color(viewModel.appColor),
+                        .clickable {
+                            viewModel.apply {
+                                search(it)
+                            }
+                        }
+                        .padding(top = 10.dp,bottom = 10.dp)
+                    ,verticalAlignment = Alignment.CenterVertically) {
+                    Text(it,
+                        fontSize = 15.sp,color = colorResource(id = R.color.text_color),
                         modifier = modifier.padding(start = 12.dp)
                     )
-                    Column(modifier.weight(1f)) {
-                        Icon(Icons.Filled.Close, contentDescription = "close history",
-                            modifier = modifier
-                                .padding(end = 12.dp)
-                                .align(Alignment.End)
-                        )
-                    }
+                    Icon(Icons.Filled.Close, contentDescription = "close history",
+                        modifier = modifier
+                            .weight(1f)
+                            .size(18.dp, 18.dp)
+                            .wrapContentWidth(Alignment.End)
+                            .padding(end = 12.dp)
+                            .clickable {
+                                viewModel.removeIt(it)
+                            }
+                        ,
+                        tint = colorResource(id = R.color.colorBlack666)
+                    )
                 }
             }
         }
@@ -85,12 +152,14 @@ fun SearchContent(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
 
 @Composable
 private fun SearchTopBar(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
+    Mylog.e("HHLog", "SearchTopBar")
+    val paddingValues = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars)
     TopAppBar({
         TextField(value = viewModel.searchName, onValueChange = {
             viewModel.searchName = it
         },textStyle = TextStyle(fontSize = 15.sp),
             placeholder = {
-            Text("请输入关键字搜索",fontSize = 15.sp)
+            Text(stringResource(id = R.string.please_key_search),fontSize = 15.sp)
         },colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
@@ -100,7 +169,9 @@ private fun SearchTopBar(modifier: Modifier = Modifier, viewModel: SearchViewMod
             placeholderColor = Color.Gray,
             textColor = Color.White,
             cursorColor = Color.Red
-        ),modifier = modifier.wrapContentHeight(Alignment.CenterVertically).height(IntrinsicSize.Min),
+        ),modifier = modifier
+                .wrapContentHeight(Alignment.CenterVertically)
+                .height(IntrinsicSize.Min),
             trailingIcon = {
                 if(viewModel.searchName!=""){
                     IconButton(onClick = { viewModel.searchName = "" }) {
@@ -113,19 +184,23 @@ private fun SearchTopBar(modifier: Modifier = Modifier, viewModel: SearchViewMod
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search), // 将键盘的回车键定义为搜索
             // 给回车键定义点击搜索事件，弹出搜索内容
-            keyboardActions = KeyboardActions(onSearch = { }) ,
+            keyboardActions = KeyboardActions(onSearch = {
+                viewModel.search()
+            }) ,
             singleLine = true
         )
     },
         backgroundColor = Color(viewModel.appColor),
-        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars),
+        contentPadding = paddingValues,
         navigationIcon = {
             IconButton(onClick = { viewModel.onBackPressed() }) {
                 Icon(Icons.Filled.ArrowBack, contentDescription = "back",tint = Color.White)
             }
         },
         actions = {
-            IconButton(onClick = {  }) {
+            IconButton(onClick = {
+                viewModel.search()
+            }) {
                 Icon(
                     painterResource(id = R.mipmap.ic_search), contentDescription = "search",
                     tint = Color.White

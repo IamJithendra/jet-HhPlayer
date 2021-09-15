@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.coil.rememberCoilPainter
@@ -46,11 +47,7 @@ import com.hh.composeplayer.ui.viewmodel.HomeViewModel
 import com.hh.composeplayer.ui.viewmodel.MovieListViewModel
 import com.hh.composeplayer.util.*
 import com.hh.composeplayer.util.Mylog.e
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.litepal.LitePal
-import org.litepal.extension.findAll
 
 /**
  * @ProjectName: HelloComPose
@@ -126,96 +123,114 @@ fun SwipeRefreshItem(
     itemCount : Int
 ) {
     e("HHLog", "SwipeRefreshItem$itemCount")
+
     BoxWithConstraints {
-        when (itemCount) {
-            0 -> {
-                LazyVerticalGrid(
-                    cells = GridCells.Fixed(1),
-                    modifier
-                        .fillMaxSize()
-                ) {
-                    e("HHLog", "LazyGridScope1------$viewModel")
+        when(movieList.loadState.refresh){
+            is LoadState.Error->{
+                LazyColumn{
                     item {
-                        e("HHLog", "LazyGridItemScope1$viewModel")
-                        if (!boxProgress) {
-                            Box(
-                                Modifier.height(maxHeight), Alignment.Center
-                            ) {
-                                Text(stringResource(R.string.no_data))
-                            }
-                        }
+                        ErrorBox(modifier
+                            .height(maxHeight)
+                            .width(maxWidth),R.string.no_network)
                     }
                 }
             }
-            else -> {
-                LazyVerticalGrid(
-                    cells = GridCells.Fixed(2),
-                    modifier
-                        .fillMaxSize()
-                ) {
-                    e("HHLog", "LazyGridScope2$viewModel")
-                    items(movieList.itemCount) {
-                        e("HHLog", "LazyGridItemScope2$viewModel")
-                        Card(
-                            modifier = modifier
-                                .padding(12.dp)
-                                .wrapContentHeight()
-                                .clickable { viewModel.startCompose(Model.Search) },
-                            shape = RoundedCornerShape(8.dp),
-                            elevation = 5.dp
+            is LoadState.Loading->{
+                    Box(
+                        modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Column (horizontalAlignment = Alignment.CenterHorizontally){
+                            CircularProgressIndicator()
+                            Text(boxProgressText,
+                                modifier.padding(0.dp, 8.dp, 0.dp, 0.dp))
+                        }
+                    }
+            }
+            else ->{
+                when (itemCount) {
+                    0 -> {
+                        LazyColumn{
+                            item {
+                                ErrorBox(modifier
+                                    .height(maxHeight)
+                                    .width(maxWidth),R.string.no_data)
+                            }
+                        }
+                    }
+                    else -> {
+                        LazyVerticalGrid(
+                            cells = GridCells.Fixed(2),
+                            modifier
+                                .fillMaxSize()
                         ) {
-                            Box(
-                                modifier = Modifier.height(IntrinsicSize.Max),
-                                propagateMinConstraints = true//传入的最小约束是否应传递给内容。
-                            ) {
-                                Image(
-                                    painter = rememberCoilPainter(request = movieList[it]!!.pic),
-                                    contentDescription = "Avatar",
-                                    contentScale = ContentScale.FillBounds,
-                                    modifier = modifier.height(200.dp)
-                                )
-                                //拉渐变
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(
-                                            brush = Brush.verticalGradient(
-                                                colors = listOf(
-                                                    Color.Transparent,
-                                                    colorResource(id = R.color.font_primary)
-                                                ),
-                                                startY = 400f//数据越大黑色越少
-                                            )
+                            e("HHLog", "LazyGridScope2$viewModel")
+                            items(movieList.itemCount) {
+                                e("HHLog", "LazyGridItemScope2$viewModel")
+                                Card(
+                                    modifier = modifier
+                                        .padding(12.dp)
+                                        .wrapContentHeight()
+                                        .clickable { viewModel.startCompose(Model.Search) },
+                                    shape = RoundedCornerShape(8.dp),
+                                    elevation = 5.dp
+                                ) {
+                                    Box(
+                                        modifier = Modifier.height(IntrinsicSize.Max),
+                                        propagateMinConstraints = true//传入的最小约束是否应传递给内容。
+                                    ) {
+                                        Image(
+                                            painter = rememberCoilPainter(request = movieList[it]!!.pic),
+                                            contentDescription = "Avatar",
+                                            contentScale = ContentScale.FillBounds,
+                                            modifier = modifier.height(200.dp)
                                         )
-                                )
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.BottomStart
-                                )
-                                {
-                                    Text(
-                                        text = movieList[it]!!.name!!,
-                                        textAlign = TextAlign.Center,
-                                        fontSize = 13.sp,
-                                        color = Color.White,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        fontStyle = FontStyle.Italic,
-                                        fontWeight = FontWeight.Medium,
-                                        textDecoration = TextDecoration.None
-                                    )
+                                        //拉渐变
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(
+                                                    brush = Brush.verticalGradient(
+                                                        colors = listOf(
+                                                            Color.Transparent,
+                                                            colorResource(id = R.color.font_primary)
+                                                        ),
+                                                        startY = 400f//数据越大黑色越少
+                                                    )
+                                                )
+                                        )
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(16.dp),
+                                            contentAlignment = Alignment.BottomStart
+                                        )
+                                        {
+                                            Text(
+                                                text = movieList[it]!!.name!!,
+                                                textAlign = TextAlign.Center,
+                                                fontSize = 13.sp,
+                                                color = Color.White,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                                fontStyle = FontStyle.Italic,
+                                                fontWeight = FontWeight.Medium,
+                                                textDecoration = TextDecoration.None
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
-                        boxProgress = false
                     }
                 }
             }
         }
+
     }
 }
+
+
 
 @Composable
 private fun MainToolBar(modifier: Modifier = Modifier, viewModel: HomeViewModel) {

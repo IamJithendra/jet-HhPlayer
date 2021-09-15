@@ -8,7 +8,11 @@
     <string name="main_mine_start">赏个start</string>
     <string name="search_history">搜索历史</string>
     <string name="close">清空</string>
+    <string name="please_key_search">请输入关键字搜索</string>
+    <string name="tips">温馨提示</string>
+    <string name="confirm_want_clear">确定清空吗?</string>
     <string name="no_data">没有数据</string>
+    <string name="no_network">没有网络</string>
     <string name="refresh_data">重新加载</string>
     <string name="setting_basic_text">基本设置</string>
     <string name="setting_other_text">其他设置</string>

@@ -1,11 +1,14 @@
 package com.hh.composeplayer.base
 
+import android.os.Bundle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.ViewModel
 import com.hh.composeplayer.R
 import com.hh.composeplayer.bean.Model
+import com.hh.composeplayer.util.ServiceLocator
 import com.hh.composeplayer.util.SingleLiveEvent
 
 
@@ -16,6 +19,7 @@ import com.hh.composeplayer.util.SingleLiveEvent
  */
 
 abstract class BaseViewModel : ViewModel(), LifecycleObserver {
+    val repository = ServiceLocator.provideRepository()
     /**
      * 主题颜色 Theme Color
      */
@@ -32,14 +36,21 @@ abstract class BaseViewModel : ViewModel(), LifecycleObserver {
     fun showToast(title: String) {
         UIChangeLiveData.showToastEvent.postValue(title)
     }
-
     /**
      * 跳转页面
      */
     fun startCompose(model: Model) {
         UIChangeLiveData.startComposeEvent.postValue(model)
     }
-
+    /**
+     * 跳转页面带参数
+     */
+    fun startComposeBundle(model: Model,any: Any) {
+        val params: MutableMap<String, Any> = HashMap()
+        params[MODEL] = model
+        params[ANY] = any
+        UIChangeLiveData.startComposeBundleEvent.postValue(params)
+    }
     /**
      * 返回上一层
      */
@@ -61,9 +72,13 @@ abstract class BaseViewModel : ViewModel(), LifecycleObserver {
             var showDialogEvent: SingleLiveEvent<String> = SingleLiveEvent()
             var showToastEvent: SingleLiveEvent<String> = SingleLiveEvent()
             var startComposeEvent: SingleLiveEvent<Model> = SingleLiveEvent()
+            var startComposeBundleEvent: SingleLiveEvent<MutableMap<String,Any>> = SingleLiveEvent()
             var dismissDialogEvent: SingleLiveEvent<Void> = SingleLiveEvent()
             var onBackPressedEvent: SingleLiveEvent<Void> = SingleLiveEvent()
             var appExitEvent: SingleLiveEvent<Void> = SingleLiveEvent()
         }
     }
 }
+
+var MODEL = "MODEL"
+var ANY = "ANY"

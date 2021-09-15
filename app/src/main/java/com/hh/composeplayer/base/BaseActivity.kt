@@ -24,7 +24,9 @@ import com.hh.composeplayer.base.BaseViewModel.UIChangeLiveData.Companion.dismis
 import com.hh.composeplayer.base.BaseViewModel.UIChangeLiveData.Companion.onBackPressedEvent
 import com.hh.composeplayer.base.BaseViewModel.UIChangeLiveData.Companion.showDialogEvent
 import com.hh.composeplayer.base.BaseViewModel.UIChangeLiveData.Companion.showToastEvent
+import com.hh.composeplayer.base.BaseViewModel.UIChangeLiveData.Companion.startComposeBundleEvent
 import com.hh.composeplayer.base.BaseViewModel.UIChangeLiveData.Companion.startComposeEvent
+import com.hh.composeplayer.bean.Model
 import com.hh.composeplayer.util.CpNavigation
 import com.hh.composeplayer.util.ldDismiss
 import com.hh.composeplayer.util.showLd
@@ -81,6 +83,11 @@ abstract class BaseActivity<VM : BaseViewModel?> : AppCompatActivity(), Coroutin
             }
             startComposeEvent.observe(this){model ->
                 CpNavigation.to(model)
+            }
+            startComposeBundleEvent.observe(this){map->
+                val model : Model = map[MODEL] as Model
+                val any : Any = map[ANY] as Any
+                CpNavigation.to(model,any)
             }
             onBackPressedEvent.observe(this){
                 onBackPressed()

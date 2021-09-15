@@ -32,4 +32,5 @@
     <color name="login_title_color">#404040</color>
     <color name="translucent_2">#20000000</color>
     <color name="translucent_5">#55000000</color>
+    <color name="colorBlack666">#666</color>
 </resources>

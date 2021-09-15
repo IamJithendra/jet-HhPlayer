@@ -1,6 +1,6 @@
 package com.hh.composeplayer.bean
 
-class Video(){
+class Video{
     var dt: String? = null
     var id: String? = null
     var last: String? = null
@@ -17,6 +17,7 @@ class Video(){
     var des: String? = null
     var state: String? = null
     var lang: String? = null
+    var pageCount : String? =null
 }
 
 class PlayerSiteList{

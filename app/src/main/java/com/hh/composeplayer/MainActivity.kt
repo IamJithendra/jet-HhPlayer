@@ -3,6 +3,10 @@ package com.hh.composeplayer
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -15,22 +19,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.navArgument
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.google.accompanist.insets.*
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.hh.composeplayer.base.BaseActivity
 import com.hh.composeplayer.bean.Model
 import com.hh.composeplayer.manager.TabListWorkManager
 import com.hh.composeplayer.ui.*
-import com.hh.composeplayer.ui.theme.HelloComPoseTheme
+import com.hh.composeplayer.ui.viewmodel.SearchResultViewModel
 import com.hh.composeplayer.util.*
 import kotlinx.coroutines.launch
 import com.hh.composeplayer.util.CpNavigation.navHostController
@@ -38,11 +45,14 @@ import com.hh.composeplayer.util.Mylog.e
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class MainActivity : BaseActivity<MainViewModel>() {
     var exitTime = 0L
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -52,10 +62,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 override fun onGranted(granted: List<String>, all: Boolean) {
                     e("HHLog","onGranted")
                     setContent {
-                        HelloComPoseTheme {
-                            navHostController = rememberNavController()
-                            Scaffold(viewModel!!)
-                            DialogProgress()
+                        MaterialTheme {
+                            ProvideWindowInsets {
+                                navHostController = rememberAnimatedNavController()
+                                Scaffold(viewModel!!)
+                                DialogProgress()
+                            }
                         }
                     }
                 }
@@ -69,10 +81,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
                     }
                     e("HHLog","onDenied")
                     setContent {
-                        HelloComPoseTheme {
-                            navHostController = rememberNavController()
-                            Scaffold(viewModel!!)
-                            DialogProgress()
+                        MaterialTheme {
+                            ProvideWindowInsets {
+                                navHostController = rememberAnimatedNavController()
+                                Scaffold(viewModel!!)
+                                DialogProgress()
+                            }
                         }
                     }
                 }
@@ -131,41 +145,55 @@ class MainActivity : BaseActivity<MainViewModel>() {
 }
 
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
 @Composable
 private fun Scaffold(viewModel: MainViewModel) {
     e("HHLog","Scaffold")
-    ProvideWindowInsets {
         Surface(
             color = MaterialTheme.colors.surface,
             contentColor = contentColorFor(MaterialTheme.colors.surface)
         ) {
-            NavHost(navController = navHostController, startDestination = Model.Main.name) {
+            AnimatedNavHost(navController = navHostController, startDestination = Model.Main.name) {
                 //当前需要展示首页/列表页
                 composable(Model.Setting.toString()) {
                     e("HHLog","composableSetting")
                     CpSetting()
                 }
-                composable(Model.Search.toString()){
+                composable(Model.Search.toString(),
+                    enterTransition = { _, _ ->
+                        fadeIn(animationSpec = tween(700))
+                    },exitTransition = { _, _ ->
+                        fadeOut(animationSpec = tween(700))
+                    }
+                ){
                     e("HHLog","composableSearch")
                     SearchView()
                 }
                 composable(Model.Main.toString()){
-                    LaunchedEffect("mainViewModel"){
-                        viewModel.appColor = SettingUtil.getColor()
-                    }
                     e("HHLog","composableMain")
                     MainContent(viewModel = viewModel)
                 }
+                composable("${Model.SearchResult}/{searchName}",
+                    arguments = listOf(navArgument("searchName") {
+                        // Make argument type safe
+                        type = NavType.StringType
+                    }
+                    ),
+                    ){
+                    val searchName = it.arguments?.getString("searchName","")
+                    SearchResult(searchName = searchName!!)
+                }
             }
         }
-    }
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel) {
     val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect("mainViewModel"){
+        viewModel.appColor = SettingUtil.getColor()
+    }
     Box{
         Column(modifier.fillMaxSize()) {
             HorizontalPager(state = viewModel.pagerState, modifier.weight(1f),dragEnabled = false) {page->

@@ -4,17 +4,12 @@ import com.alibaba.fastjson.JSON
 import com.google.gson.Gson
 import com.hh.composeplayer.api.ApiService
 import com.hh.composeplayer.api.TaskApi
-import com.hh.composeplayer.bean.Jsons
-import com.hh.composeplayer.bean.MovieBean
-import com.hh.composeplayer.bean.Ty
-import com.hh.composeplayer.bean.Video
+import com.hh.composeplayer.bean.*
 import com.hh.composeplayer.util.Mylog
-import com.hh.composeplayer.util.boxProgress
 import com.hh.composeplayer.util.xmlToJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
 
 
 /**
@@ -54,32 +49,48 @@ class HttpDataHelper {
         return job.await()
     }
 
-    suspend fun getPlayerList(state: Long, page : Int, coroutineScope: CoroutineScope):List<Video> {
-        val movieList: MutableList<Video> = ArrayList()
-        Mylog.e("HHLog", "getPlayerList$state and $page")
+    suspend fun getPlayerList(state: Long, page : Int, coroutineScope: CoroutineScope): ListVideo {
+        var movieList = ListVideo()
         val job = coroutineScope.async(IO) {
-//            runCatching {
-//                boxProgress = true
                 val movieStr = if (state == 0L) {
                     TaskApi.create(ApiService::class.java).getPlayerListZx(page)
                 } else {
                     TaskApi.create(ApiService::class.java).getPlayerList(state.toString(), page)
                 }
+            Mylog.e("HHLog", "getPlayerList$state------$page")
                 val jsonObject = xmlToJson(movieStr.toString())?.toJson()
                 val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
                 movieBean.rss?.run {
                     list?.apply {
-                        video?.apply {
-                            movieList.addAll(this)
+                        if(video == null){
+                            video = ArrayList()
                         }
+                        movieList = this
+//                        video?.apply {
+//                            movieList = this
+//                        }
                     }
                 }
                 movieList
-//            }.onSuccess {
-//                boxProgress = false
-//            }.onFailure {
-//                boxProgress = false
-//            }
+        }
+        return job.await()
+    }
+
+    suspend fun getSearchResultList(searchName : String ,page : Int,coroutineScope: CoroutineScope):List<Video>{
+        val searchList: MutableList<Video> = ArrayList()
+        val job = coroutineScope.async(IO) {
+            val movieStr = TaskApi.create(ApiService::class.java).getSearchPlayerList(searchName,page)
+            Mylog.e("HHLog", "getSearchResultList$movieStr")
+            val jsonObject = xmlToJson(movieStr.toString())?.toJson()
+            val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
+            movieBean.rss?.run {
+                list?.apply {
+                    video?.apply {
+                        searchList.addAll(this)
+                    }
+                }
+            }
+            searchList
         }
         return job.await()
     }

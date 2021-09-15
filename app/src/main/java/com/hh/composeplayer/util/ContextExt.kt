@@ -1,17 +1,13 @@
 package com.hh.composeplayer.util
 
 import android.content.Context
-import android.text.TextUtils
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.StringRes
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.getActionButton
-import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+import com.hh.composeplayer.R
 import fr.arnaudguyon.xmltojsonlib.XmlToJson
-import java.io.BufferedReader
-import java.io.FileReader
-import java.io.IOException
 
 /**
  * @ProjectName: HelloComPose
@@ -33,6 +29,11 @@ fun xmlToJson(xmlString: String?): XmlToJson? {
     return null
 }
 
+
+fun Context.stringResource(@StringRes rid:Int) : String{
+    return resources.getString(rid)
+}
+
 /**
  * @param message 显示对话框的内容 必填项
  * @param title 显示对话框的标题 默认 温馨提示
@@ -44,8 +45,8 @@ fun xmlToJson(xmlString: String?): XmlToJson? {
  */
 suspend fun Context.showMessage(
     message: String,
-    title: String = "温馨提示",
-    positiveButtonText: String = "确定",
+    title: String = stringResource(R.string.tips),
+    positiveButtonText: String = stringResource(R.string.confirm),
     positiveAction: () -> Unit = {},
     negativeButtonText: String = "",
     negativeAction: () -> Unit = {}

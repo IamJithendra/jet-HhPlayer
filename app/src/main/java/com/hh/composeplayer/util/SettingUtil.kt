@@ -197,7 +197,7 @@ object SettingUtil {
     /**
      * 获取搜索历史缓存数据
      */
-    suspend fun getSearchHistoryData(): List<String> {
+    suspend fun getSearchHistoryData(): ArrayList<String> {
         val searchCacheStr =  DataStorePreference.getStringValue("history")
         if (!TextUtils.isEmpty(searchCacheStr)) {
             return Gson().fromJson(searchCacheStr

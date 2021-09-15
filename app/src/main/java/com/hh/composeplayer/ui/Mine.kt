@@ -53,8 +53,7 @@ import kotlinx.coroutines.withContext
     }
     Column(
         modifier
-            .fillMaxSize()
-            .background(Color(0xFFF8F9FB)),
+            .fillMaxSize(),
     ) {
         MineTopAvater()
         Surface(
