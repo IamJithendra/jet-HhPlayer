@@ -30,7 +30,8 @@ class HomeViewModel : BaseViewModel() {
     var isShowError by mutableStateOf(false)
 
     init {
-        movieTabList.addAll(LitePal.findAll<Ty>())
+        movieTabList.addAll(LitePal.findAll<Ty>().filter{ it.staffId.toInt()!=17 && it.staffId.toInt()!=18 && it.staffId.toInt()!=24
+        })
         if(movieTabList.size!=0){
             movieTabList.add(0,Ty("最新"))
         }
@@ -49,11 +50,9 @@ class HomeViewModel : BaseViewModel() {
             movieTabList.addAll(repository.getTabList())
         },{
             boxProgress = false
-            Mylog.e("HHLog", "getMovieTabListSuccess")
             isShowError = false
         },{
             boxProgress = false
-            Mylog.e("HHLog", "getMovieTabListError"+it.message)
             isShowError = true
         }
         )

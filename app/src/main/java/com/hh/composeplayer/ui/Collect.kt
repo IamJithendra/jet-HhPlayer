@@ -24,9 +24,7 @@ import com.hh.composeplayer.R
 import com.hh.composeplayer.bean.CollectBusK
 import com.hh.composeplayer.bean.Model
 import com.hh.composeplayer.ui.viewmodel.CollectViewModel
-import com.hh.composeplayer.util.CpTopBar
-import com.hh.composeplayer.util.SettingUtil
-import com.hh.composeplayer.util.showMessage
+import com.hh.composeplayer.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -44,68 +42,88 @@ import org.litepal.extension.findAll
  */
 @Composable
 fun Collect(modifier: Modifier = Modifier) {
-    val collectViewModel : CollectViewModel = viewModel()
-    LaunchedEffect(collectViewModel){
-        collectViewModel.collectData.addAll(withContext(Dispatchers.IO){
+    Mylog.e("HHLog", "Collect")
+    val collectViewModel: CollectViewModel = viewModel()
+    LaunchedEffect(collectViewModel) {
+        collectViewModel.collectData.addAll(withContext(Dispatchers.IO) {
             collectViewModel.appColor = SettingUtil.getColor()
             LitePal.findAll<CollectBusK>()
         })
     }
     Column(modifier.fillMaxSize()) {
-        CpTopBar(modifier,collectViewModel, stringResource(R.string.main_mine_collect))
-        CollectContent(modifier,collectViewModel,)
+        CpTopBar(modifier, collectViewModel, stringResource(R.string.main_mine_collect))
+        CollectContent(modifier, collectViewModel)
     }
 }
 
 @Composable
-fun CollectContent(modifier: Modifier = Modifier,viewModel: CollectViewModel){
+fun CollectContent(modifier: Modifier = Modifier, viewModel: CollectViewModel) {
+    Mylog.e("HHLog", "CollectContent")
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    LazyColumn(modifier.fillMaxSize()){
-        items(viewModel.collectData){
-            Row(
-                modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        viewModel.apply {
-                            viewModel.startComposeBundle(Model.MovieDetail, it.collectId.toString())
-                        }
+    BoxWithConstraints{
+    LazyColumn(modifier.fillMaxSize()) {
+            when (viewModel.collectData.size) {
+                0 -> {
+                    item {
+                        ErrorBox(
+                            modifier
+                                .height(maxHeight)
+                                .width(maxWidth), R.string.no_data
+                        )
                     }
-                    .padding(top = 10.dp, bottom = 10.dp)
-                ,verticalAlignment = Alignment.CenterVertically) {
-                Text("${it.cName}  ${it.type}",
-                    fontSize = 15.sp,color = colorResource(id = R.color.text_color),
-                    modifier = modifier.padding(start = 12.dp)
-                )
-                Icon(
-                    Icons.Filled.Delete, contentDescription = "close history",
-                    modifier = modifier
-                        .weight(1f)
-                        .wrapContentWidth(Alignment.End)
-                        .padding(end = 12.dp)
-                        .clickable {
-                            context.showMessage(
-                                "确定要取消收藏吗?",
-                                positiveButtonText = "确定",
-                                negativeButtonText = "取消",
-                                positiveAction = {
-                                    coroutineScope.launch {
-                                        withContext(IO) {
-                                            LitePal.deleteAll<CollectBusK>(
-                                                "collectId = ?",
-                                                it.collectId.toString()
-                                            )
-                                        }
-                                        viewModel.collectData.remove(it)
-                                        viewModel.showToast("取消收藏成功")
+                }
+                else -> {
+                    items(viewModel.collectData) {
+                        Row(
+                            modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    viewModel.apply {
+                                        viewModel.startComposeBundle(
+                                            Model.MovieDetail,
+                                            it.collectId.toString()
+                                        )
                                     }
-                                })
+                                }
+                                .padding(top = 10.dp, bottom = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                "${it.cName}  ${it.type}",
+                                fontSize = 15.sp, color = colorResource(id = R.color.text_color),
+                                modifier = modifier.padding(start = 12.dp)
+                            )
+                            Icon(
+                                Icons.Filled.Delete, contentDescription = "close history",
+                                modifier = modifier
+                                    .weight(1f)
+                                    .wrapContentWidth(Alignment.End)
+                                    .padding(end = 12.dp)
+                                    .clickable {
+                                        context.showMessage(
+                                            "确定要取消收藏吗?",
+                                            positiveButtonText = "确定",
+                                            negativeButtonText = "取消",
+                                            positiveAction = {
+                                                coroutineScope.launch {
+                                                    withContext(IO) {
+                                                        LitePal.deleteAll<CollectBusK>(
+                                                            "collectId = ?",
+                                                            it.collectId.toString()
+                                                        )
+                                                    }
+                                                    viewModel.collectData.remove(it)
+                                                    viewModel.showToast("取消收藏成功")
+                                                }
+                                            })
+                                    },
+                                tint = colorResource(id = R.color.colorBlack666)
+                            )
                         }
-                    ,
-                    tint = colorResource(id = R.color.colorBlack666)
-                )
+                        Divider(modifier.fillMaxWidth())
+                    }
+                }
             }
-            Divider(modifier.fillMaxWidth())
         }
     }
 }

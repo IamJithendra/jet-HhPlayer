@@ -61,7 +61,6 @@ import kotlinx.coroutines.withContext
             .fillMaxWidth().background(Color.White),
             elevation = 2.dp,
             shape = RoundedCornerShape(8.dp),
-//            contentColor = Color.White,
             color = MaterialTheme.colors.surface, // color will be adjusted for elevation
         ) {
             Column{

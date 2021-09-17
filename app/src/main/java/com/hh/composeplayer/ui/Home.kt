@@ -123,7 +123,6 @@ fun SwipeRefreshItem(
     itemCount : Int
 ) {
     e("HHLog", "SwipeRefreshItem$itemCount")
-
     BoxWithConstraints {
         when(movieList.loadState.refresh){
             is LoadState.Error->{
@@ -180,7 +179,7 @@ fun SwipeRefreshItem(
                                         propagateMinConstraints = true//传入的最小约束是否应传递给内容。
                                     ) {
                                         Image(
-                                            painter = rememberCoilPainter(request = movieList[it]!!.pic),
+                                            painter = rememberCoilPainter(request = movieList[it]!!.pic,previewPlaceholder = R.drawable.ic_launcher_foreground),
                                             contentDescription = "Avatar",
                                             contentScale = ContentScale.FillBounds,
                                             modifier = modifier.height(200.dp)

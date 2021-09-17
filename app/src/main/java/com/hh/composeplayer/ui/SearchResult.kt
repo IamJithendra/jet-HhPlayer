@@ -3,16 +3,11 @@ package com.hh.composeplayer.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,17 +15,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
-import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.hh.composeplayer.R
 import com.hh.composeplayer.ui.viewmodel.SearchResultViewModel
-import com.hh.composeplayer.util.ErrorBox
-import com.hh.composeplayer.util.Mylog
-import com.hh.composeplayer.util.SettingUtil
-import com.hh.composeplayer.util.boxProgress
+import com.hh.composeplayer.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -54,7 +43,7 @@ fun SearchResult(modifier: Modifier = Modifier, searchName: String) {
         }
     }
     Column(modifier.fillMaxSize()) {
-        SearchResultToolBar(modifier, viewModel)
+        CpTopBar(modifier,viewModel, viewModel.searchName.value)
         SearchResultContent(modifier, viewModel)
     }
     BoxProgress()
@@ -73,17 +62,19 @@ fun SearchResultContent(modifier: Modifier = Modifier, viewModel: SearchResultVi
                     boxProgress = true
                 }
                 is LoadState.Error -> {
-                    ErrorBox(modifier
-                        .height(maxHeight)
-                        .width(maxWidth),R.string.no_network)
+                    ErrorBox(
+                        modifier
+                            .height(maxHeight)
+                            .width(maxWidth),R.string.no_network)
                     boxProgress = false
                 }
                 else -> {
                     when (searchResultList.itemCount) {
                         0 -> {
-                            ErrorBox(modifier
-                                .height(maxHeight)
-                                .width(maxWidth),R.string.no_data)
+                            ErrorBox(
+                                modifier
+                                    .height(maxHeight)
+                                    .width(maxWidth),R.string.no_data)
                         }
                         else -> {
                             LazyColumn(modifier) {
@@ -117,30 +108,6 @@ fun SearchResultContent(modifier: Modifier = Modifier, viewModel: SearchResultVi
                     boxProgress = false
                 }
             }
-
         }
     }
-}
-
-@Composable
-fun SearchResultToolBar(modifier: Modifier = Modifier, viewModel: SearchResultViewModel) {
-    Mylog.e("HHLog", "SearchResultToolBar")
-    TopAppBar(
-        {
-            Text(viewModel.searchName.value, color = Color.White)
-        },
-        modifier = modifier,
-        backgroundColor = Color(viewModel.appColor),
-        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars),
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    viewModel.onBackPressed()
-                }
-            ) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "back", tint = Color.White)
-            }
-        },
-        elevation = 20.dp,
-    )
 }

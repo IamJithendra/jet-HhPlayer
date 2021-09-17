@@ -5,7 +5,7 @@
     <string name="main_mine_setting">设置</string>
     <string name="main_mine_collect">收藏</string>
     <string name="main_mine_about">关于</string>
-    <string name="main_mine_start">赏个start</string>
+    <string name="main_mine_start">项目地址</string>
     <string name="search_history">搜索历史</string>
     <string name="close">清空</string>
     <string name="please_key_search">请输入关键字搜索</string>
@@ -30,5 +30,7 @@
     <string name="entry2">Good Job</string>
     <string name="entry3">What Can I Do For You?</string>
     <string name="loading_error_refresh">加载失败,点击重试</string>
-
+    <string name="movie_api">影视api</string>
+    <string name="about_email">开发程序员Email</string>
+    <string name="project_address">项目地址</string>
 </resources>

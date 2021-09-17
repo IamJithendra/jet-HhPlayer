@@ -112,8 +112,8 @@ class MainActivity : BaseActivity<MainViewModel>() {
     private fun initWorkManager(){
         val currentDate = Calendar.getInstance()
         val dueDate = Calendar.getInstance()
-        // 设置在大约 11:00:00 AM 执行
-        dueDate.set(Calendar.HOUR_OF_DAY, 11)
+        // 设置在大约 9:00:00 AM 执行
+        dueDate.set(Calendar.HOUR_OF_DAY, 5)
         dueDate.set(Calendar.MINUTE, 0)
         dueDate.set(Calendar.SECOND, 0)
         if (dueDate.before(currentDate)) {
@@ -174,6 +174,10 @@ private fun Scaffold(viewModel: MainViewModel) {
                 composable(Model.Collect.toString()){
                     e("HHLog","composableCollect")
                     Collect()
+                }
+                composable(Model.Start.toString()){
+                    e("HHLog","composableProjcetAdress")
+                    ProjcetAdress()
                 }
                 composable("${Model.MovieDetail}/{ids}",
                     enterTransition = { _, _ ->
