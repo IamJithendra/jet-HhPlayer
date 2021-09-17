@@ -1,6 +1,7 @@
 package com.hh.composeplayer.util
 
 import android.content.Context
+import android.graphics.Color
 import android.widget.Toast
 import androidx.annotation.StringRes
 import com.afollestad.materialdialogs.MaterialDialog
@@ -43,13 +44,14 @@ fun Context.stringResource(@StringRes rid:Int) : String{
  * @param negativeAction 点击取消按钮触发的方法 默认空方法
  *
  */
-suspend fun Context.showMessage(
+fun Context.showMessage(
     message: String,
     title: String = stringResource(R.string.tips),
     positiveButtonText: String = stringResource(R.string.confirm),
     positiveAction: () -> Unit = {},
     negativeButtonText: String = "",
-    negativeAction: () -> Unit = {}
+    negativeAction: () -> Unit = {},
+    btnColor : Int = Color.parseColor("#4A148C")
 ) {
 
     MaterialDialog(this)
@@ -65,8 +67,8 @@ suspend fun Context.showMessage(
                     negativeAction.invoke()
                 }
             }
-            getActionButton(WhichButton.POSITIVE).updateTextColor(SettingUtil.getColor())
-            getActionButton(WhichButton.NEGATIVE).updateTextColor(SettingUtil.getColor())
+            getActionButton(WhichButton.POSITIVE).updateTextColor(btnColor)
+            getActionButton(WhichButton.NEGATIVE).updateTextColor(btnColor)
         }
 }
 

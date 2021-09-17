@@ -1,17 +1,17 @@
 package com.hh.composeplayer.ui
 
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+
 
 /**
  * @ProjectName: HelloComPose
  * @Package: com.hh.composeplayer.ui
  * @Description: 类描述
  * @Author: Hai Huang
- * @CreateDate: 2021/8/30  8:52
+ * @CreateDate: 2021/9/16  8:50
  */
-
 @Composable
-fun Splach(modifier: Modifier = Modifier){
-
+fun About() {
+    Text(text = "asd")
 }

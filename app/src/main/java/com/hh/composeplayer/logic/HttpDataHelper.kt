@@ -10,6 +10,8 @@ import com.hh.composeplayer.util.xmlToJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
+import org.litepal.LitePal
+import org.litepal.extension.find
 
 
 /**
@@ -57,7 +59,6 @@ class HttpDataHelper {
                 } else {
                     TaskApi.create(ApiService::class.java).getPlayerList(state.toString(), page)
                 }
-            Mylog.e("HHLog", "getPlayerList$state------$page")
                 val jsonObject = xmlToJson(movieStr.toString())?.toJson()
                 val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
                 movieBean.rss?.run {
@@ -66,9 +67,6 @@ class HttpDataHelper {
                             video = ArrayList()
                         }
                         movieList = this
-//                        video?.apply {
-//                            movieList = this
-//                        }
                     }
                 }
                 movieList
@@ -80,7 +78,6 @@ class HttpDataHelper {
         val searchList: MutableList<Video> = ArrayList()
         val job = coroutineScope.async(IO) {
             val movieStr = TaskApi.create(ApiService::class.java).getSearchPlayerList(searchName,page)
-            Mylog.e("HHLog", "getSearchResultList$movieStr")
             val jsonObject = xmlToJson(movieStr.toString())?.toJson()
             val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
             movieBean.rss?.run {
@@ -91,6 +88,24 @@ class HttpDataHelper {
                 }
             }
             searchList
+        }
+        return job.await()
+    }
+
+    suspend fun getMovieDetail(ids : String, coroutineScope: CoroutineScope) : List<Video>{
+        val movieDetail: MutableList<Video> = ArrayList()
+        val job = coroutineScope.async(IO) {
+            val movieDetailStr = TaskApi.create(ApiService::class.java).getPlayerDetail(ids)
+            val jsonObject = xmlToJson(movieDetailStr.toString())?.toJson()
+            val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
+            movieBean.rss?.run {
+                list?.apply {
+                    video?.apply {
+                        movieDetail.addAll(this)
+                    }
+                }
+            }
+            movieDetail
         }
         return job.await()
     }

@@ -3,10 +3,8 @@ package com.hh.composeplayer
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -19,12 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import androidx.work.Constraints
-import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.google.accompanist.insets.*
@@ -37,7 +33,6 @@ import com.hh.composeplayer.base.BaseActivity
 import com.hh.composeplayer.bean.Model
 import com.hh.composeplayer.manager.TabListWorkManager
 import com.hh.composeplayer.ui.*
-import com.hh.composeplayer.ui.viewmodel.SearchResultViewModel
 import com.hh.composeplayer.util.*
 import kotlinx.coroutines.launch
 import com.hh.composeplayer.util.CpNavigation.navHostController
@@ -45,8 +40,6 @@ import com.hh.composeplayer.util.Mylog.e
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -129,9 +122,9 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
         val timeDiff = dueDate.timeInMillis - currentDate.timeInMillis
         val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)  // 网络状态
+//            .setRequiredNetworkType(NetworkType.CONNECTED)  // 网络状态
             .setRequiresBatteryNotLow(true)                 // 不在电量不足时执行
-            .setRequiresCharging(true)                      // 在充电时执行
+//            .setRequiresCharging(true)                      // 在充电时执行
             .setRequiresStorageNotLow(true)                 // 不在存储容量不足时执行
 //        .setRequiresDeviceIdle(true)                    // 在待机状态下执行，需要 API 23
             .build()
@@ -172,6 +165,26 @@ private fun Scaffold(viewModel: MainViewModel) {
                 composable(Model.Main.toString()){
                     e("HHLog","composableMain")
                     MainContent(viewModel = viewModel)
+
+                }
+                composable(Model.About.toString()){
+                    e("HHLog","composableAbout")
+                    About()
+                }
+                composable(Model.Collect.toString()){
+                    e("HHLog","composableCollect")
+                    Collect()
+                }
+                composable("${Model.MovieDetail}/{ids}",
+                    enterTransition = { _, _ ->
+                        fadeIn(animationSpec = tween(1500))
+                    },exitTransition = { _, _ ->
+                        fadeOut(animationSpec = tween(1500))
+                    }
+                ){
+                    e("HHLog","composableMovieDetail")
+                    val ids = it.arguments?.getString("ids","")
+                    MovieDetail(movieId = ids!!)
                 }
                 composable("${Model.SearchResult}/{searchName}",
                     arguments = listOf(navArgument("searchName") {
@@ -180,6 +193,7 @@ private fun Scaffold(viewModel: MainViewModel) {
                     }
                     ),
                     ){
+                    e("HHLog","composableSearchResult")
                     val searchName = it.arguments?.getString("searchName","")
                     SearchResult(searchName = searchName!!)
                 }

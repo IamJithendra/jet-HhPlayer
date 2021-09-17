@@ -33,15 +33,15 @@ class HhCpApp : Application(){
         super.onCreate()
         context = applicationContext
         instance = this
-        initRetrofit("")
+        initRetrofit()
     }
 
-    private fun initRetrofit(token: String): OkHttpClient {
+    private fun initRetrofit(): OkHttpClient {
         //请求头
         val headerInterceptor = Interceptor { chain: Interceptor.Chain ->
             val orignaRequest = chain.request()
             val request = orignaRequest.newBuilder()
-                .header("Authorization", "Bearer $token")
+//                .header("Authorization", "Bearer $token")
                 .method(orignaRequest.method, orignaRequest.body)
                 .build()
             chain.proceed(request)

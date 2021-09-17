@@ -171,7 +171,7 @@ fun SwipeRefreshItem(
                                     modifier = modifier
                                         .padding(12.dp)
                                         .wrapContentHeight()
-                                        .clickable { viewModel.startCompose(Model.Search) },
+                                        .clickable { viewModel.startComposeBundle(Model.MovieDetail,movieList[it]!!.id.toString()) },
                                     shape = RoundedCornerShape(8.dp),
                                     elevation = 5.dp
                                 ) {

@@ -148,48 +148,6 @@ object SettingUtil {
         return Color.argb(alpha, red, green, blue)
     }
 
-    /**
-     * 是否已经登录
-     */
-    suspend fun isLogin(): Boolean {
-        return DataStorePreference.getBooleanValue("login",false)
-    }
-
-    /**
-     * 设置是否已经登录
-     */
-    suspend fun setIsLogin(isLogin: Boolean) {
-        DataStorePreference.setValue("login", isLogin)
-    }
-
-    /**
-     * 获取token
-     */
-    suspend fun getToken(): String {
-        return DataStorePreference.getStringValue("login","")
-    }
-
-    /**
-     * 设置token
-     */
-    suspend fun setToken(token: String) {
-        DataStorePreference.setValue("token", token)
-    }
-
-    /**
-     * 是否是第一次登陆
-     */
-    suspend fun isFirst(): Boolean {
-        return DataStorePreference.getBooleanValue("first")
-    }
-
-    /**
-     * 是否是第一次登陆
-     */
-    suspend fun setFirst(first: Boolean) {
-        DataStorePreference.setValue("first", first)
-    }
-
     suspend fun setSearchHistoryData(searchResponseStr: String) {
         DataStorePreference.setValue("history", searchResponseStr)
     }

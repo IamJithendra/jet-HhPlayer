@@ -23,6 +23,7 @@
     <string name="cancel">取消</string>
     <string name="done">完成</string>
     <string name="exit">退出</string>
+    <string name="anthology">选集</string>
     <string name="loading">请稍后…</string>
     <string name="exit_app">退出程序</string>
     <string name="entry1">Hello world.</string>

@@ -31,6 +31,10 @@ class Repository ( private val dataHelper: HttpDataHelper ){
 //        dataHelper.getPlayerList(state,page,pageSize)
 //    }
 
+    suspend fun getMovieDetail(ids : String) = withContext(IO) {
+        dataHelper.getMovieDetail(ids,this)
+    }
+
     fun getSearchResultList(searchName : String) : Flow<PagingData<Video>>{
         return Pager(
             config = PagingConfig(20),

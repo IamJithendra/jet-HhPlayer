@@ -70,7 +70,6 @@ fun SearchView(modifier: Modifier = Modifier) {
 @Composable
 fun SearchContent(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
     Mylog.e("HHLog", "SearchContent")
-    val itemsList = viewModel.historyDataState
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -117,14 +116,12 @@ fun SearchContent(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
             )
         }
         LazyColumn(modifier.fillMaxSize().padding(top = 10.dp)){
-            items(itemsList){
+            items(viewModel.historyDataState){
                 Row(
                     modifier
                         .fillMaxWidth()
                         .clickable {
-                            viewModel.apply {
-                                search(it)
-                            }
+                            viewModel.search(it)
                         }
                         .padding(top = 10.dp,bottom = 10.dp)
                     ,verticalAlignment = Alignment.CenterVertically) {

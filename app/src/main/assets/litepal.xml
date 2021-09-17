@@ -2,12 +2,13 @@
 <litepal>
     <dbname value="composePlayer" />
 
-    <version value="3" />
+    <version value="1" />
     <list>
         <mapping class="com.hh.composeplayer.bean.Jsons" />
         <mapping class="com.hh.composeplayer.bean.Rss" />
         <mapping class="com.hh.composeplayer.bean.Class" />
         <mapping class="com.hh.composeplayer.bean.Ty" />
+        <mapping class="com.hh.composeplayer.bean.CollectBusK" />
     </list>
 
 </litepal>

@@ -4,7 +4,7 @@ class Video{
     var dt: String? = null
     var id: String? = null
     var last: String? = null
-    var name: String? = null
+    var name: String? = ""
     var note: String? = null
     var tid: String? = null
     var type: String? = null

@@ -1,5 +1,6 @@
 package com.hh.composeplayer.util
 
+import android.view.View
 import com.alibaba.fastjson.JSON
 
 /**
@@ -14,4 +15,17 @@ import com.alibaba.fastjson.JSON
  */
 fun Any?.toJson():String{
     return JSON.toJSON(this).toString()
+}
+
+/**
+ * px值转换成dp
+ */
+fun View.px2dp(px: Int): Int {
+    val scale = resources.displayMetrics.density
+    return (px / scale + 0.5f).toInt()
+}
+
+fun View.dp2px(dp: Int): Int {
+    val scale = resources.displayMetrics.density
+    return (dp * scale + 0.5f).toInt()
 }
