@@ -1,7 +1,6 @@
 package com.hh.composeplayer.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -27,11 +25,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.TopAppBar
@@ -128,9 +126,10 @@ fun SwipeRefreshItem(
             is LoadState.Error->{
                 LazyColumn{
                     item {
-                        ErrorBox(modifier
-                            .height(maxHeight)
-                            .width(maxWidth),R.string.no_network)
+                        ErrorBox(
+                            modifier
+                                .height(maxHeight)
+                                .width(maxWidth),R.string.no_network)
                     }
                 }
             }
@@ -151,9 +150,10 @@ fun SwipeRefreshItem(
                     0 -> {
                         LazyColumn{
                             item {
-                                ErrorBox(modifier
-                                    .height(maxHeight)
-                                    .width(maxWidth),R.string.no_data)
+                                ErrorBox(
+                                    modifier
+                                        .height(maxHeight)
+                                        .width(maxWidth),R.string.no_data)
                             }
                         }
                     }
@@ -170,7 +170,12 @@ fun SwipeRefreshItem(
                                     modifier = modifier
                                         .padding(12.dp)
                                         .wrapContentHeight()
-                                        .clickable { viewModel.startComposeBundle(Model.MovieDetail,movieList[it]!!.id.toString()) },
+                                        .clickable {
+                                            viewModel.startComposeBundle(
+                                                Model.MovieDetail,
+                                                movieList[it]!!.id.toString()
+                                            )
+                                        },
                                     shape = RoundedCornerShape(8.dp),
                                     elevation = 5.dp
                                 ) {
@@ -178,11 +183,17 @@ fun SwipeRefreshItem(
                                         modifier = Modifier.height(IntrinsicSize.Max),
                                         propagateMinConstraints = true//传入的最小约束是否应传递给内容。
                                     ) {
-                                        Image(
-                                            painter = rememberCoilPainter(request = movieList[it]!!.pic,previewPlaceholder = R.drawable.ic_launcher_foreground),
-                                            contentDescription = "Avatar",
-                                            contentScale = ContentScale.FillBounds,
-                                            modifier = modifier.height(200.dp)
+//                                        Image(
+//                                            painter = rememberCoilPainter(request = movieList[it]!!.pic,previewPlaceholder = R.drawable.ic_launcher_foreground),
+//                                            contentDescription = "Avatar",
+//                                            contentScale = ContentScale.FillBounds,
+//                                            modifier = modifier.height(200.dp)
+//                                        )
+                                        NetworkImage(
+                                            url = movieList[it]!!.pic!!,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .aspectRatio(0.85f),
                                         )
                                         //拉渐变
                                         Box(

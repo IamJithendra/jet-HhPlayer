@@ -13,12 +13,15 @@ object CacheDataManager {
         if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
             cacheSize += getFolderSize(context.externalCacheDir)
         }
+        cacheSize += getFolderSize(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES+"/photo"))
         return getFormatSize(cacheSize.toDouble())
     }
 
     fun clearAllCache(context: Context) {
         context.let {
             deleteDir(it.cacheDir)
+            it.getExternalFilesDir(Environment.DIRECTORY_PICTURES+"/photo")
+                ?.let { it1 -> deleteDir(it1) }
             if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                 if (it.externalCacheDir == null) {
                     it.showToast("清理缓存失败")

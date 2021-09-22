@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,12 +30,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.statusBarsHeight
 import com.hh.composeplayer.MainActivity
 import com.hh.composeplayer.R
@@ -46,7 +45,6 @@ import com.hh.composeplayer.util.dp2px
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.roundToInt
 
 /**
  * @ProjectName: HelloComPose
@@ -71,7 +69,10 @@ fun MovieDetail(modifier:Modifier = Modifier,movieId : String = "") {
     val content = LocalContext.current
 
     Column(modifier.fillMaxSize()){
-        Divider(modifier.statusBarsHeight().background(Color.Black))
+        Divider(
+            modifier
+                .statusBarsHeight()
+                .background(Color.Black))
         Mylog.e("HHLog", "MovieDetailColumn")
         AndroidView({
             val fragmentLayout = FrameLayout(it)
@@ -80,9 +81,10 @@ fun MovieDetail(modifier:Modifier = Modifier,movieId : String = "") {
             modifier
                 .fillMaxWidth()
                 .height(200.dp)){
+            val episCode = viewModel.episode.value
             coroutineScope.launch {
                 if(viewModel.anthology.size>0){
-                    WebController().loadUrl(content as MainActivity, viewModel.anthology[viewModel.episode.value].playUrl, it,this)
+                    WebController().loadUrl(content as MainActivity, viewModel.anthology[episCode].playUrl, it,this)
                     val back = ImageView(it.context)
                     back.setImageResource(com.glance.guolindev.R.drawable.material_ic_keyboard_arrow_left_black_24dp)
                     back.setColorFilter(android.graphics.Color.parseColor("#FFFFFF"))

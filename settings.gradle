@@ -29,5 +29,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "HelloComPose"
+rootProject.name = "HhPlayer"
 include ':app'

@@ -2,6 +2,7 @@ package com.hh.composeplayer.util
 
 import android.content.Context
 import android.graphics.Color
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.StringRes
 import com.afollestad.materialdialogs.MaterialDialog
@@ -21,6 +22,24 @@ import fr.arnaudguyon.xmltojsonlib.XmlToJson
 fun Context.showToast(msg: String){
     Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 }
+
+fun Context.dp2px(dp: Int): Int {
+    val scale = resources.displayMetrics.density
+    return (dp * scale + 0.5f).toInt()
+}
+
+/**
+ * 获取屏幕宽度
+ */
+val Context.screenWidth
+    get() = resources.displayMetrics.widthPixels
+
+/**
+ * 获取屏幕高度
+ */
+val Context.screenHeight
+    get() = resources.displayMetrics.heightPixels
+
 
 fun xmlToJson(xmlString: String?): XmlToJson? {
     try {

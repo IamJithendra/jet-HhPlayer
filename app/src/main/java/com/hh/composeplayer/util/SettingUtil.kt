@@ -164,6 +164,16 @@ object SettingUtil {
         return arrayListOf()
     }
 
+    suspend fun setAvatarData(avatarStr: String) {
+        DataStorePreference.setValue("avatar", avatarStr)
+    }
+
+    /**
+     * 获取头像
+     */
+    suspend fun getAvatarData(): String {
+        return DataStorePreference.getStringValue("avatar")
+    }
 
 
 }
