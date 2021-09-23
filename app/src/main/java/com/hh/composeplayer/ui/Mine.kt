@@ -140,7 +140,7 @@ fun MineTopAvatar(modifier: Modifier = Modifier,viewModel: MineViewModel) {
             withContext(IO){
                 bitmap = BitmapBlur.doBlur(
                     Bitmap.createScaledBitmap(it, context.screenWidth, context.dp2px(340), true),
-                    40, false,
+                    30, false,
                 )
             }
         }

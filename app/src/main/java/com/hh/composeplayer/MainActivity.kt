@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import androidx.work.Constraints
+import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.google.accompanist.insets.*
@@ -111,14 +112,14 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     private fun initWorkManager() {
         val constraints = Constraints.Builder()
-//            .setRequiredNetworkType(NetworkType.CONNECTED)  // 网络状态
+            .setRequiredNetworkType(NetworkType.CONNECTED)  // 网络状态
             .setRequiresBatteryNotLow(true)                 // 不在电量不足时执行
 //            .setRequiresCharging(true)                      // 在充电时执行
-            .setRequiresStorageNotLow(true)                 // 不在存储容量不足时执行
+//            .setRequiresStorageNotLow(true)                 // 不在存储容量不足时执行
 //        .setRequiresDeviceIdle(true)                    // 在待机状态下执行，需要 API 23
             .build()
         val request = PeriodicWorkRequest
-            .Builder(TabListWorkManager::class.java, 15, TimeUnit.MINUTES)
+            .Builder(TabListWorkManager::class.java, 16, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .build()
         WorkManager.getInstance(HhCpApp.context).enqueue(request)
