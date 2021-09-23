@@ -2,7 +2,6 @@ package com.hh.composeplayer.ui.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import com.hh.composeplayer.R
 import com.hh.composeplayer.base.BaseViewModel
 import com.hh.composeplayer.base.launch
 import com.hh.composeplayer.bean.*

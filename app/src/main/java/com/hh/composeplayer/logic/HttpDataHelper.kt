@@ -22,91 +22,79 @@ import org.litepal.extension.find
  * @CreateDate: 2021/8/16  15:31
  */
 class HttpDataHelper {
-    suspend fun getTabList(coroutineScope: CoroutineScope): List<Ty> {
-        val tabListr: MutableList<Ty> = ArrayList()
-        val job = coroutineScope.async(IO) {
-            val tabList = TaskApi.create(ApiService::class.java).getPlayer()
-            val jsonObject = xmlToJson(tabList.toString())?.toJson()
-            val homeTab = Gson().fromJson(jsonObject.toString(), Jsons::class.java)
-            homeTab.apply {
-                mJson = jsonObject.toString()
+    suspend fun getTabList(): List<Ty> {
+        val tabListResult: MutableList<Ty> = ArrayList()
+        val tabList = TaskApi.create(ApiService::class.java).getPlayer()
+        val jsonObject = xmlToJson(tabList.toString())?.toJson()
+        val homeTab = Gson().fromJson(jsonObject.toString(), Jsons::class.java)
+        homeTab.apply {
+            mJson = jsonObject.toString()
+            saveOrUpdate("id = ?", id.toString())
+            rss?.apply {
                 saveOrUpdate("id = ?", id.toString())
-                rss?.apply {
+                `class`?.apply {
                     saveOrUpdate("id = ?", id.toString())
-                    `class`?.apply {
-                        saveOrUpdate("id = ?", id.toString())
-                        ty?.apply {
-                            tabListr.add(Ty("最新"))
-                            tabListr.addAll(this)
-                            forEachIndexed { index, ty ->
-                                ty.pageId = (index+1)
-                                ty.saveOrUpdate("id = ?", (index + 1).toString())
-                            }
+                    ty?.apply {
+                        tabListResult.add(Ty("最新"))
+                        tabListResult.addAll(this)
+                        forEachIndexed { index, ty ->
+                            ty.pageId = (index + 1)
+                            ty.saveOrUpdate("id = ?", (index + 1).toString())
                         }
                     }
                 }
             }
-            tabListr
         }
-        return job.await()
+        return tabListResult
     }
 
-    suspend fun getPlayerList(state: Long, page : Int, coroutineScope: CoroutineScope): ListVideo {
+    suspend fun getPlayerList(state: Long, page: Int): ListVideo {
         var movieList = ListVideo()
-        val job = coroutineScope.async(IO) {
-                val movieStr = if (state == 0L) {
-                    TaskApi.create(ApiService::class.java).getPlayerListZx(page)
-                } else {
-                    TaskApi.create(ApiService::class.java).getPlayerList(state.toString(), page)
-                }
-                val jsonObject = xmlToJson(movieStr.toString())?.toJson()
-                val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
-                movieBean.rss?.run {
-                    list?.apply {
-                        if(video == null){
-                            video = ArrayList()
-                        }
-                        movieList = this
-                    }
-                }
-                movieList
+        val movieStr = if (state == 0L) {
+            TaskApi.create(ApiService::class.java).getPlayerListZx(page)
+        } else {
+            TaskApi.create(ApiService::class.java).getPlayerList(state.toString(), page)
         }
-        return job.await()
+        val jsonObject = xmlToJson(movieStr.toString())?.toJson()
+        val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
+        movieBean.rss?.run {
+            list?.apply {
+                if (video == null) {
+                    video = ArrayList()
+                }
+                movieList = this
+            }
+        }
+        return movieList
     }
 
-    suspend fun getSearchResultList(searchName : String ,page : Int,coroutineScope: CoroutineScope):List<Video>{
+    suspend fun getSearchResultList(searchName: String, page: Int): List<Video> {
         val searchList: MutableList<Video> = ArrayList()
-        val job = coroutineScope.async(IO) {
-            val movieStr = TaskApi.create(ApiService::class.java).getSearchPlayerList(searchName,page)
-            val jsonObject = xmlToJson(movieStr.toString())?.toJson()
-            val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
-            movieBean.rss?.run {
-                list?.apply {
-                    video?.apply {
-                        searchList.addAll(this)
-                    }
+        val movieStr = TaskApi.create(ApiService::class.java).getSearchPlayerList(searchName, page)
+        val jsonObject = xmlToJson(movieStr.toString())?.toJson()
+        val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
+        movieBean.rss?.run {
+            list?.apply {
+                video?.apply {
+                    searchList.addAll(this)
                 }
             }
-            searchList
         }
-        return job.await()
+        return searchList
     }
 
-    suspend fun getMovieDetail(ids : String, coroutineScope: CoroutineScope) : List<Video>{
+    suspend fun getMovieDetail(ids: String): List<Video> {
         val movieDetail: MutableList<Video> = ArrayList()
-        val job = coroutineScope.async(IO) {
-            val movieDetailStr = TaskApi.create(ApiService::class.java).getPlayerDetail(ids)
-            val jsonObject = xmlToJson(movieDetailStr.toString())?.toJson()
-            val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
-            movieBean.rss?.run {
-                list?.apply {
-                    video?.apply {
-                        movieDetail.addAll(this)
-                    }
+        val movieDetailStr = TaskApi.create(ApiService::class.java).getPlayerDetail(ids)
+        val jsonObject = xmlToJson(movieDetailStr.toString())?.toJson()
+        val movieBean = JSON.parseObject(jsonObject.toString(), MovieBean::class.java)
+        movieBean.rss?.run {
+            list?.apply {
+                video?.apply {
+                    movieDetail.addAll(this)
                 }
             }
-            movieDetail
         }
-        return job.await()
+        return movieDetail
     }
 }

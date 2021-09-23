@@ -22,7 +22,7 @@ class Repository ( private val dataHelper: HttpDataHelper ){
      * get TabList
      */
     suspend fun getTabList() = withContext(IO) {
-        dataHelper.getTabList(this)
+        dataHelper.getTabList()
     }
 //    /**
 //     * get MovieList
@@ -32,7 +32,7 @@ class Repository ( private val dataHelper: HttpDataHelper ){
 //    }
 
     suspend fun getMovieDetail(ids : String) = withContext(IO) {
-        dataHelper.getMovieDetail(ids,this)
+        dataHelper.getMovieDetail(ids)
     }
 
     fun getSearchResultList(searchName : String) : Flow<PagingData<Video>>{

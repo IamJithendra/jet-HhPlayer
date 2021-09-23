@@ -58,15 +58,13 @@ import kotlinx.coroutines.launch
 fun Home(modifier: Modifier = Modifier) {
     e("HHLog", "Home")
     val homeViewModel: HomeViewModel = viewModel()
-    homeViewModel.let {
         LaunchedEffect(homeViewModel) {
-            it.appColor = SettingUtil.getColor()
-            if (it.movieTabList.size == 0) {
+            homeViewModel.appColor = SettingUtil.getColor()
+            if (homeViewModel.movieTabList.size == 0) {
                 boxProgress = true
                 homeViewModel.getMovieTabList()
             }
         }
-    }
     Column(modifier.fillMaxSize()) {
             MainToolBar(modifier, homeViewModel)
             MovieTabLayout(modifier, homeViewModel)

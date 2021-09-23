@@ -29,17 +29,17 @@ import kotlinx.coroutines.withContext
  */
 
 @Composable
-fun ProjcetAdress(modifier: Modifier = Modifier) {
-    val projcetAdressViewModel : ProjectAdressViewModel = viewModel()
-    LaunchedEffect(projcetAdressViewModel){
+fun ProjectAddress(modifier: Modifier = Modifier) {
+    val projectAddressViewModel : ProjectAdressViewModel = viewModel()
+    LaunchedEffect(projectAddressViewModel){
         withContext(Dispatchers.IO){
-            projcetAdressViewModel.appColor = SettingUtil.getColor()
+            projectAddressViewModel.appColor = SettingUtil.getColor()
         }
     }
     val content = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     Column {
-        CpTopBar(viewModel = projcetAdressViewModel, title = "HhPlayer")
+        CpTopBar(viewModel = projectAddressViewModel, title = "HhPlayer")
         AndroidView({
             val fragmentLayout = FrameLayout(it)
             fragmentLayout
@@ -47,7 +47,7 @@ fun ProjcetAdress(modifier: Modifier = Modifier) {
             coroutineScope.launch {
                 WebController().loadUrl(
                     content as MainActivity,
-                    projcetAdressViewModel.projectAdress,
+                    projectAddressViewModel.projectAdress,
                     it,
                     this
                 )

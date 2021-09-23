@@ -57,7 +57,6 @@ fun CpSetting(modifier: Modifier = Modifier) {
         }
     }
     Column(modifier.fillMaxSize()) {
-//        SettingTopBar(modifier,settingViewModel)
         CpTopBar(modifier, settingViewModel, stringResource(R.string.main_mine_setting))
         Text(
             stringResource(R.string.setting_basic_text),

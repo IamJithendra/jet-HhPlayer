@@ -28,6 +28,10 @@ fun Context.dp2px(dp: Int): Int {
     return (dp * scale + 0.5f).toInt()
 }
 
+fun Context.px2dp(px: Int): Int {
+    val scale = resources.displayMetrics.density
+    return (px / scale + 0.5f).toInt()
+}
 /**
  * 获取屏幕宽度
  */

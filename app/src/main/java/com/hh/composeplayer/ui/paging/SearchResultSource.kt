@@ -22,7 +22,7 @@ class SearchResultSource(private val dataHelper: HttpDataHelper,private val sear
             withContext(Dispatchers.IO){
                 val page = params.key ?: 1 // set page 1 as default
 //                val pageSize = params.loadSize
-                val repoResponse = dataHelper.getSearchResultList(searchName,page,this)
+                val repoResponse = dataHelper.getSearchResultList(searchName,page)
                 val prevKey = if (page > 1) page - 1 else null
                 val nextKey = if (repoResponse.isNotEmpty()) page + 1 else null
                 LoadResult.Page(repoResponse, prevKey, nextKey)

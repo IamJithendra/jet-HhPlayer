@@ -34,14 +34,12 @@ import kotlinx.coroutines.withContext
 fun SearchResult(modifier: Modifier = Modifier, searchName: String) {
     Mylog.e("HHLog", "SearchResult")
     val viewModel: SearchResultViewModel = viewModel()
-    viewModel.let { model ->
-        model.searchName.value = searchName
+    viewModel.searchName.value = searchName
         LaunchedEffect(viewModel) {
             withContext(Dispatchers.IO) {
-                model.appColor = SettingUtil.getColor()
+                viewModel.appColor = SettingUtil.getColor()
             }
         }
-    }
     Column(modifier.fillMaxSize()) {
         CpTopBar(modifier,viewModel, viewModel.searchName.value)
         SearchResultContent(modifier, viewModel)

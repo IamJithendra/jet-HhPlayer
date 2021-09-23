@@ -50,20 +50,16 @@ import kotlinx.coroutines.withContext
 @Composable
 fun SearchView(modifier: Modifier = Modifier) {
     Mylog.e("HHLog", "SearchView")
-    val searchViewModel : SearchViewModel = viewModel()
-    searchViewModel.let {
-        LaunchedEffect("searchViewModel"){
-            withContext(Dispatchers.IO){
-                it.appColor = SettingUtil.getColor()
-            }
+    val searchViewModel: SearchViewModel = viewModel()
+    LaunchedEffect(searchViewModel) {
+        withContext(Dispatchers.IO) {
+            searchViewModel.appColor = SettingUtil.getColor()
         }
-    }
-    Column(modifier.fillMaxSize()){
-        SearchTopBar(modifier,searchViewModel)
-        SearchContent(modifier,searchViewModel)
-    }
-    LaunchedEffect(searchViewModel){
         searchViewModel.getHistoryData()
+    }
+    Column(modifier.fillMaxSize()) {
+        SearchTopBar(modifier, searchViewModel)
+        SearchContent(modifier, searchViewModel)
     }
 }
 
@@ -73,14 +69,15 @@ fun SearchContent(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    Column{
+    Column {
         Row(
             modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp)
-            ,verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.search_history),
-                fontSize = 16.sp,color = Color(viewModel.appColor),
+                .padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                stringResource(R.string.search_history),
+                fontSize = 16.sp, color = Color(viewModel.appColor),
                 modifier = modifier.padding(start = 12.dp)
             )
             Text(
@@ -115,18 +112,22 @@ fun SearchContent(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
                     }
             )
         }
-        LazyColumn(modifier.fillMaxSize().padding(top = 10.dp)){
-            items(viewModel.historyDataState){
+        LazyColumn(
+            modifier
+                .fillMaxSize()
+                .padding(top = 10.dp)) {
+            items(viewModel.historyDataState) {
                 Row(
                     modifier
                         .fillMaxWidth()
                         .clickable {
                             viewModel.search(it)
                         }
-                        .padding(top = 10.dp,bottom = 10.dp)
-                    ,verticalAlignment = Alignment.CenterVertically) {
-                    Text(it,
-                        fontSize = 15.sp,color = colorResource(id = R.color.text_color),
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        it,
+                        fontSize = 15.sp, color = colorResource(id = R.color.text_color),
                         modifier = modifier.padding(start = 12.dp)
                     )
                     Icon(Icons.Filled.Close, contentDescription = "close history",
@@ -137,8 +138,7 @@ fun SearchContent(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
                             .padding(end = 12.dp)
                             .clickable {
                                 viewModel.removeIt(it)
-                            }
-                        ,
+                            },
                         tint = colorResource(id = R.color.colorBlack666)
                     )
                 }
@@ -151,47 +151,49 @@ fun SearchContent(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
 private fun SearchTopBar(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
     Mylog.e("HHLog", "SearchTopBar")
     val paddingValues = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars)
-    TopAppBar({
-        TextField(value = viewModel.searchName, onValueChange = {
-            viewModel.searchName = it
-        },textStyle = TextStyle(fontSize = 15.sp),
-            placeholder = {
-            Text(stringResource(id = R.string.please_key_search),fontSize = 15.sp)
-        },colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            errorIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            placeholderColor = Color.Gray,
-            textColor = Color.White,
-            cursorColor = Color.Red
-        ),modifier = modifier
-                .wrapContentHeight(Alignment.CenterVertically)
-                .height(IntrinsicSize.Min),
-            trailingIcon = {
-                if(viewModel.searchName!=""){
-                    IconButton(onClick = { viewModel.searchName = "" }) {
-                        Icon(
-                            Icons.Filled.Close, contentDescription = "close searchName",
-                            tint = Color.White
-                        )
+    TopAppBar(
+        {
+            TextField(
+                value = viewModel.searchName, onValueChange = {
+                    viewModel.searchName = it
+                }, textStyle = TextStyle(fontSize = 15.sp),
+                placeholder = {
+                    Text(stringResource(id = R.string.please_key_search), fontSize = 15.sp)
+                }, colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    errorIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    placeholderColor = Color.Gray,
+                    textColor = Color.White,
+                    cursorColor = Color.Red
+                ), modifier = modifier
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .height(IntrinsicSize.Min),
+                trailingIcon = {
+                    if (viewModel.searchName != "") {
+                        IconButton(onClick = { viewModel.searchName = "" }) {
+                            Icon(
+                                Icons.Filled.Close, contentDescription = "close searchName",
+                                tint = Color.White
+                            )
+                        }
                     }
-                }
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search), // 将键盘的回车键定义为搜索
-            // 给回车键定义点击搜索事件，弹出搜索内容
-            keyboardActions = KeyboardActions(onSearch = {
-                viewModel.search()
-            }) ,
-            singleLine = true
-        )
-    },
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search), // 将键盘的回车键定义为搜索
+                // 给回车键定义点击搜索事件，弹出搜索内容
+                keyboardActions = KeyboardActions(onSearch = {
+                    viewModel.search()
+                }),
+                singleLine = true
+            )
+        },
         backgroundColor = Color(viewModel.appColor),
         contentPadding = paddingValues,
         navigationIcon = {
             IconButton(onClick = { viewModel.onBackPressed() }) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "back",tint = Color.White)
+                Icon(Icons.Filled.ArrowBack, contentDescription = "back", tint = Color.White)
             }
         },
         actions = {
@@ -205,5 +207,5 @@ private fun SearchTopBar(modifier: Modifier = Modifier, viewModel: SearchViewMod
             }
         },
         elevation = 0.dp
-    ) 
+    )
 }

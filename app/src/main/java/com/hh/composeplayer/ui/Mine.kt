@@ -61,11 +61,10 @@ import java.util.*
  fun Mine(modifier: Modifier = Modifier) {
     Mylog.e("HHLog", "Mine")
     val mineViewModel: MineViewModel = viewModel()
-    mineViewModel.let {
-        LaunchedEffect("mineViewModel"){
-            withContext(IO){
-                it.appColor = SettingUtil.getColor()
-            }
+    LaunchedEffect(mineViewModel){
+        Mylog.e("HHLog", "LaunchedEffectMine")
+        withContext(IO){
+            mineViewModel.appColor = SettingUtil.getColor()
         }
     }
     Column(modifier.fillMaxSize()) {
@@ -138,19 +137,19 @@ fun MineItem(modifier: Modifier = Modifier,viewModel: MineViewModel,
 fun MineTopAvatar(modifier: Modifier = Modifier,viewModel: MineViewModel) {
     val context = LocalContext.current
     val fileBitmap by viewModel.fileBitmap.observeAsState()
-    Mylog.e("HHLog", "MineTopAvater${viewModel.fileBitmap.value}")
+    Mylog.e("HHLog", "MineTopAvatar")
     fileBitmap?.let {
         var bitmap by remember { mutableStateOf(it) }
         LaunchedEffect (it){
             withContext(IO){
                 bitmap = BitmapBlur.doBlur(
-                    Bitmap.createScaledBitmap(it, context.screenWidth, context.dp2px(320), true),
+                    Bitmap.createScaledBitmap(it, context.screenWidth, context.dp2px(340), true),
                     40, false,
                 )
             }
         }
         Box(contentAlignment = Alignment.Center) {
-            Mylog.e("HHLog", "MineTopAvaterBox")
+            Mylog.e("HHLog", "MineTopAvatarBox")
                 Image(
                     bitmap = bitmap.asImageBitmap(),
                     contentDescription = "me top background",

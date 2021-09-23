@@ -22,7 +22,7 @@ class HomeMovieListSource (private val dataHelper: HttpDataHelper, val id:Long) 
             withContext(IO){
                 val page = params.key ?: 1 // set page 1 as default
 //                val pageSize = params.loadSize
-                val repoResponse = dataHelper.getPlayerList(id,page,this)
+                val repoResponse = dataHelper.getPlayerList(id,page)
                 val prevKey = if (page > 1) page - 1 else null
                 val nextKey = if (repoResponse.pagecount!! > 1 && page<repoResponse.pagecount!!) page + 1 else null
                 LoadResult.Page(repoResponse.video!!, prevKey, nextKey)

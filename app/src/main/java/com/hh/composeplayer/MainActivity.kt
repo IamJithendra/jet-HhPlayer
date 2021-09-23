@@ -22,6 +22,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.google.accompanist.insets.*
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -45,6 +46,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : BaseActivity<MainViewModel>() {
     var exitTime = 0L
+
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +55,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
             .permission(Permission.MANAGE_EXTERNAL_STORAGE)
             .request(object : OnPermissionCallback {
                 override fun onGranted(granted: List<String>, all: Boolean) {
-                    e("HHLog","onGranted")
+                    e("HHLog", "onGranted")
                     setContent {
                         MaterialTheme {
                             ProvideWindowInsets {
@@ -64,6 +66,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
                         }
                     }
                 }
+
                 override fun onDenied(denied: List<String>, never: Boolean) {
                     if (never) {
                         showToast("被永久拒绝授权，请手动授予存储权限")
@@ -72,7 +75,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
                     } else {
                         showToast("获取存储权限失败")
                     }
-                    e("HHLog","onDenied")
+                    e("HHLog", "onDenied")
                     setContent {
                         MaterialTheme {
                             ProvideWindowInsets {
@@ -104,23 +107,13 @@ class MainActivity : BaseActivity<MainViewModel>() {
         })
         initWorkManager()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         android.os.Process.killProcess(android.os.Process.myPid())
     }
 
-    private fun initWorkManager(){
-        val currentDate = Calendar.getInstance()
-        val dueDate = Calendar.getInstance()
-        // 设置在大约 9:00:00 AM 执行
-        dueDate.set(Calendar.HOUR_OF_DAY, 5)
-        dueDate.set(Calendar.MINUTE, 0)
-        dueDate.set(Calendar.SECOND, 0)
-        if (dueDate.before(currentDate)) {
-            dueDate.add(Calendar.HOUR_OF_DAY, 24)
-        }
-
-        val timeDiff = dueDate.timeInMillis - currentDate.timeInMillis
+    private fun initWorkManager() {
         val constraints = Constraints.Builder()
 //            .setRequiredNetworkType(NetworkType.CONNECTED)  // 网络状态
             .setRequiresBatteryNotLow(true)                 // 不在电量不足时执行
@@ -128,11 +121,10 @@ class MainActivity : BaseActivity<MainViewModel>() {
             .setRequiresStorageNotLow(true)                 // 不在存储容量不足时执行
 //        .setRequiresDeviceIdle(true)                    // 在待机状态下执行，需要 API 23
             .build()
-        val request : OneTimeWorkRequest =
-            OneTimeWorkRequest.Builder(TabListWorkManager::class.java)
-                .setConstraints(constraints)
-                .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
-                .build()
+        val request = PeriodicWorkRequest
+            .Builder(TabListWorkManager::class.java, 15, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .build()
         WorkManager.getInstance(HhCpApp.context).enqueue(request)
     }
 }
@@ -141,88 +133,94 @@ class MainActivity : BaseActivity<MainViewModel>() {
 @OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
 @Composable
 private fun Scaffold(viewModel: MainViewModel) {
-    e("HHLog","Scaffold")
-        Surface(
-            color = MaterialTheme.colors.surface,
-            contentColor = contentColorFor(MaterialTheme.colors.surface)
-        ) {
-            AnimatedNavHost(navController = navHostController, startDestination = Model.Main.name) {
-                //当前需要展示首页/列表页
-                composable(Model.Setting.toString()) {
-                    e("HHLog","composableSetting")
-                    CpSetting()
+    e("HHLog", "Scaffold")
+    Surface(
+        color = MaterialTheme.colors.surface,
+        contentColor = contentColorFor(MaterialTheme.colors.surface)
+    ) {
+        AnimatedNavHost(navController = navHostController, startDestination = Model.Main.name) {
+            //当前需要展示首页/列表页
+            composable(Model.Setting.toString()) {
+                e("HHLog", "composableSetting")
+                CpSetting()
+            }
+            composable(Model.Search.toString(),
+                enterTransition = { _, _ ->
+                    fadeIn(animationSpec = tween(700))
+                }, exitTransition = { _, _ ->
+                    fadeOut(animationSpec = tween(700))
                 }
-                composable(Model.Search.toString(),
-                    enterTransition = { _, _ ->
-                        fadeIn(animationSpec = tween(700))
-                    },exitTransition = { _, _ ->
-                        fadeOut(animationSpec = tween(700))
-                    }
-                ){
-                    e("HHLog","composableSearch")
-                    SearchView()
-                }
-                composable(Model.Main.toString()){
-                    e("HHLog","composableMain")
-                    MainContent(viewModel = viewModel)
+            ) {
+                e("HHLog", "composableSearch")
+                SearchView()
+            }
+            composable(Model.Main.toString()) {
+                e("HHLog", "composableMain")
+                MainContent(viewModel = viewModel)
 
+            }
+            composable(Model.About.toString()) {
+                e("HHLog", "composableAbout")
+                About()
+            }
+            composable(Model.Collect.toString()) {
+                e("HHLog", "composableCollect")
+                Collect()
+            }
+            composable(Model.Start.toString()) {
+                e("HHLog", "composableProjcetAdress")
+                ProjectAddress()
+            }
+            composable("${Model.MovieDetail}/{ids}",
+                enterTransition = { _, _ ->
+                    fadeIn(animationSpec = tween(1500))
+                }, exitTransition = { _, _ ->
+                    fadeOut(animationSpec = tween(1500))
                 }
-                composable(Model.About.toString()){
-                    e("HHLog","composableAbout")
-                    About()
+            ) {
+                e("HHLog", "composableMovieDetail")
+                val ids = it.arguments?.getString("ids", "")
+                MovieDetail(movieId = ids!!)
+            }
+            composable(
+                "${Model.SearchResult}/{searchName}",
+                arguments = listOf(navArgument("searchName") {
+                    // Make argument type safe
+                    type = NavType.StringType
                 }
-                composable(Model.Collect.toString()){
-                    e("HHLog","composableCollect")
-                    Collect()
-                }
-                composable(Model.Start.toString()){
-                    e("HHLog","composableProjcetAdress")
-                    ProjcetAdress()
-                }
-                composable("${Model.MovieDetail}/{ids}",
-                    enterTransition = { _, _ ->
-                        fadeIn(animationSpec = tween(1500))
-                    },exitTransition = { _, _ ->
-                        fadeOut(animationSpec = tween(1500))
-                    }
-                ){
-                    e("HHLog","composableMovieDetail")
-                    val ids = it.arguments?.getString("ids","")
-                    MovieDetail(movieId = ids!!)
-                }
-                composable("${Model.SearchResult}/{searchName}",
-                    arguments = listOf(navArgument("searchName") {
-                        // Make argument type safe
-                        type = NavType.StringType
-                    }
-                    ),
-                    ){
-                    e("HHLog","composableSearchResult")
-                    val searchName = it.arguments?.getString("searchName","")
-                    SearchResult(searchName = searchName!!)
-                }
+                ),
+            ) {
+                e("HHLog", "composableSearchResult")
+                val searchName = it.arguments?.getString("searchName", "")
+                SearchResult(searchName = searchName!!)
             }
         }
+    }
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel) {
     val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect("mainViewModel"){
+    LaunchedEffect("mainViewModel") {
         viewModel.appColor = SettingUtil.getColor()
     }
-    Box{
+    Box {
         Column(modifier.fillMaxSize()) {
-            HorizontalPager(state = viewModel.pagerState, modifier.weight(1f),dragEnabled = false) {page->
+            HorizontalPager(
+                state = viewModel.pagerState,
+                modifier.weight(1f),
+                dragEnabled = false
+            ) { page ->
                 when (page) {
                     0 -> {
-                        e("HHLog","MainContentHome")
+                        e("HHLog", "MainContentHome")
                         Home()
                     }
                     1 -> {
-                        e("HHLog","MainContentMine")
-                        Mine()}
+                        e("HHLog", "MainContentMine")
+                        Mine()
+                    }
                 }
             }
             MainBottomBar(viewModel) {
@@ -252,7 +250,7 @@ private fun MainBottomBar(viewModel: MainViewModel, currentChanged: (Int) -> Uni
                     Color(viewModel.appColor)
                 } else {
                     LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
-                },modifier = Modifier.size(24.dp)
+                }, modifier = Modifier.size(24.dp)
             )
             Text(
                 text = stringResource(id = R.string.main_title_home),
@@ -279,7 +277,7 @@ private fun MainBottomBar(viewModel: MainViewModel, currentChanged: (Int) -> Uni
                     Color(viewModel.appColor)
                 } else {
                     LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
-                },modifier = Modifier.size(24.dp)
+                }, modifier = Modifier.size(24.dp)
             )
             Text(
                 text = stringResource(id = R.string.main_title_mine),
