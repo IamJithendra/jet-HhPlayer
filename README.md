@@ -15,9 +15,9 @@ Go to the [Releases](https://github.com/yellowhai/HhPlayer/releases) to download
 
 ## Screenshots
 <p align="center">
-<img src="https://github.com/yellowhai/HhPlayer/blob/main/hhcp_screenshots1.gif" width="32%"/>
-<img src="https://github.com/yellowhai/HhPlayer/blob/main/hhcp_screenshots2.gif" width="32%"/>
-<img src="https://github.com/yellowhai/HhPlayer/blob/main/hhcp_screenshots3.gif" width="32%"/>
+<img src="/hhcp_screenshots1.gif" width="32%"/>
+<img src="/hhcp_screenshots2.gif" width="32%"/>
+<img src="/hhcp_screenshots3.gif" width="32%"/>
 </p>
 
 ## Tech stack & Open-source libraries
