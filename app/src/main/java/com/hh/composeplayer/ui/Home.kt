@@ -44,7 +44,6 @@ import com.hh.composeplayer.bean.Video
 import com.hh.composeplayer.ui.viewmodel.HomeViewModel
 import com.hh.composeplayer.ui.viewmodel.MovieListViewModel
 import com.hh.composeplayer.util.*
-import com.hh.composeplayer.util.Mylog.e
 import kotlinx.coroutines.launch
 
 /**
@@ -56,7 +55,6 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun Home(modifier: Modifier = Modifier) {
-    e("HHLog", "Home")
     val homeViewModel: HomeViewModel = viewModel()
         LaunchedEffect(homeViewModel) {
             homeViewModel.appColor = SettingUtil.getColor()
@@ -68,7 +66,6 @@ fun Home(modifier: Modifier = Modifier) {
     Column(modifier.fillMaxSize()) {
             MainToolBar(modifier, homeViewModel)
             MovieTabLayout(modifier, homeViewModel)
-            e("HHLog", "movieTabList"+homeViewModel.movieTabList.size)
             MovieListView(homeViewModel = homeViewModel)
     }
     BoxProgress()
@@ -77,7 +74,6 @@ fun Home(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MovieListView(modifier: Modifier = Modifier, homeViewModel: HomeViewModel) {
-    e("HHLog", "MovieListView")
     homeViewModel.pagerState.pageCount = homeViewModel.movieTabList.size
     HorizontalPager(state = homeViewModel.pagerState, modifier.fillMaxSize()) { page ->
         when (page) {
@@ -95,7 +91,6 @@ private fun HomeContent(
     homeViewModel: HomeViewModel,
     page: Int
 ) {
-    e("HHLog", "HomeContent")
     val viewModel = viewModel(
         modelClass = MovieListViewModel::class.java,
         key = homeViewModel.movieTabList[page].staffId.toString()
@@ -103,7 +98,6 @@ private fun HomeContent(
     val movieList = viewModel.getMovieList(page, homeViewModel.movieTabList[page].staffId)
         .collectAsLazyPagingItems()
     SwipeRefresh(rememberSwipeRefreshState(viewModel.isRefreshing), {
-        e("HHLog", "rememberSwipeRefreshState")
         movieList.refresh()
     }) {
         SwipeRefreshItem(modifier, viewModel, movieList, movieList.itemCount)
@@ -118,7 +112,6 @@ fun SwipeRefreshItem(
     movieList: LazyPagingItems<Video>,
     itemCount : Int
 ) {
-    e("HHLog", "SwipeRefreshItem$itemCount")
     BoxWithConstraints {
         when(movieList.loadState.refresh){
             is LoadState.Error->{
@@ -161,9 +154,7 @@ fun SwipeRefreshItem(
                             modifier
                                 .fillMaxSize()
                         ) {
-                            e("HHLog", "LazyGridScope2$viewModel")
                             items(movieList.itemCount) {
-                                e("HHLog", "LazyGridItemScope2$viewModel")
                                 Card(
                                     modifier = modifier
                                         .padding(12.dp)
@@ -242,7 +233,6 @@ fun SwipeRefreshItem(
 
 @Composable
 private fun MainToolBar(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
-    e("HHLog", "MainToolBar")
     TopAppBar(
         { Text(stringResource(id = R.string.main_title_home), color = Color.White) },
         modifier = modifier,
@@ -275,7 +265,6 @@ private fun MainToolBar(modifier: Modifier = Modifier, viewModel: HomeViewModel)
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun MovieTabLayout(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
-    e("HHLog", "MovieTabLayout")
     Column {
         ScrollableTabRow(
             selectedTabIndex = viewModel.pagerState.currentPage,
@@ -303,7 +292,6 @@ private fun MovieTabLayout(modifier: Modifier = Modifier, viewModel: HomeViewMod
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun NewTabs(modifier: Modifier = Modifier, viewModel: HomeViewModel, titles: List<Ty>) {
-    e("HHLog", "NewTabs")
     val tabList = remember { titles }
     val coroutineScope = rememberCoroutineScope()
     tabList.forEachIndexed { index, title ->

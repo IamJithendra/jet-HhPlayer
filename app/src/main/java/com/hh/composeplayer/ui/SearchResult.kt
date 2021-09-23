@@ -32,7 +32,6 @@ import kotlinx.coroutines.withContext
  */
 @Composable
 fun SearchResult(modifier: Modifier = Modifier, searchName: String) {
-    Mylog.e("HHLog", "SearchResult")
     val viewModel: SearchResultViewModel = viewModel()
     viewModel.searchName.value = searchName
         LaunchedEffect(viewModel) {
@@ -49,7 +48,6 @@ fun SearchResult(modifier: Modifier = Modifier, searchName: String) {
 
 @Composable
 fun SearchResultContent(modifier: Modifier = Modifier, viewModel: SearchResultViewModel) {
-    Mylog.e("HHLog", "SearchResultContent")
     val searchResultList = viewModel.getSearchResult().collectAsLazyPagingItems()
     SwipeRefresh(rememberSwipeRefreshState(viewModel.isRefreshing), onRefresh = {
         searchResultList.refresh()

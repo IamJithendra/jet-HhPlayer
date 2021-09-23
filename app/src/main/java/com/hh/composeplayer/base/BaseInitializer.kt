@@ -22,8 +22,6 @@ class BaseInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         MultiDex.install(context)
         LitePal.initialize(context)
-        // 当前项目是否已经适配了分区存储的特性
-        XXPermissions.setScopedStorage(true)
         //android11新特性  后台定位权限申请中，用户必须要勾选 始终允许，只有这样后台定位权限才能申请通过。
     }
 

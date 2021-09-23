@@ -42,7 +42,6 @@ import org.litepal.extension.findAll
  */
 @Composable
 fun Collect(modifier: Modifier = Modifier) {
-    Mylog.e("HHLog", "Collect")
     val collectViewModel: CollectViewModel = viewModel()
     LaunchedEffect(collectViewModel) {
         collectViewModel.collectData.addAll(withContext(Dispatchers.IO) {
@@ -58,7 +57,6 @@ fun Collect(modifier: Modifier = Modifier) {
 
 @Composable
 fun CollectContent(modifier: Modifier = Modifier, viewModel: CollectViewModel) {
-    Mylog.e("HHLog", "CollectContent")
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     BoxWithConstraints{

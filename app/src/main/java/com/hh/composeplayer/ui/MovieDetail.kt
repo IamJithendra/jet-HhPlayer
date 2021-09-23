@@ -37,7 +37,6 @@ import com.hh.composeplayer.MainActivity
 import com.hh.composeplayer.R
 import com.hh.composeplayer.ui.video.WebController
 import com.hh.composeplayer.ui.viewmodel.MovieDetailViewModel
-import com.hh.composeplayer.util.Mylog
 import com.hh.composeplayer.util.SettingUtil
 import com.hh.composeplayer.util.dp2px
 import kotlinx.coroutines.Dispatchers.IO
@@ -53,7 +52,6 @@ import kotlinx.coroutines.withContext
  */
 @Composable
 fun MovieDetail(modifier: Modifier = Modifier, movieId: String = "") {
-    Mylog.e("HHLog", "MovieDetail")
     val viewModel: MovieDetailViewModel = viewModel()
     val coroutineScope = rememberCoroutineScope()
 
@@ -71,7 +69,6 @@ fun MovieDetail(modifier: Modifier = Modifier, movieId: String = "") {
                 .statusBarsHeight()
                 .background(Color.Black)
         )
-        Mylog.e("HHLog", "MovieDetailColumn")
         AndroidView(
             {
                 val fragmentLayout = FrameLayout(it)
@@ -91,7 +88,7 @@ fun MovieDetail(modifier: Modifier = Modifier, movieId: String = "") {
                         this
                     )
                     val back = ImageView(it.context)
-                    back.setImageResource(com.glance.guolindev.R.drawable.material_ic_keyboard_arrow_left_black_24dp)
+                    back.setImageResource(R.drawable.ic_baseline_arrow_back_ios_24)
                     back.setColorFilter(android.graphics.Color.parseColor("#FFFFFF"))
                     val layoutParams = FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -138,7 +135,6 @@ fun MovieDetail(modifier: Modifier = Modifier, movieId: String = "") {
 @Composable
 fun MovieDetailFavorite(modifier: Modifier = Modifier, viewModel: MovieDetailViewModel) {
     Row(modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
-        Mylog.e("HHLog", "MovieDetailRow")
         Text(
             stringResource(id = R.string.anthology),
             fontSize = 18.sp,

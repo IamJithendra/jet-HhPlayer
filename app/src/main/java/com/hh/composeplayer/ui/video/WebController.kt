@@ -13,7 +13,6 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.hh.composeplayer.R
-import com.hh.composeplayer.util.Mylog.e
 import com.just.agentweb.AgentWeb
 import com.just.agentweb.BaseIndicatorView
 import com.just.agentweb.WebViewClient
@@ -69,7 +68,6 @@ class WebController {
                         handler: SslErrorHandler,
                         error: SslError?
                     ) {
-                        e("HHLog",error.toString())
                         handler.proceed()
                         onResume()
                     }

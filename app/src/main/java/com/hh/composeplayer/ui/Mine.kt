@@ -59,10 +59,8 @@ import java.util.*
  */
 @Composable
  fun Mine(modifier: Modifier = Modifier) {
-    Mylog.e("HHLog", "Mine")
     val mineViewModel: MineViewModel = viewModel()
     LaunchedEffect(mineViewModel){
-        Mylog.e("HHLog", "LaunchedEffectMine")
         withContext(IO){
             mineViewModel.appColor = SettingUtil.getColor()
         }
@@ -108,7 +106,6 @@ import java.util.*
 fun MineItem(modifier: Modifier = Modifier,viewModel: MineViewModel,
              textName:String,icon: ImageVector,block:()->Unit
 ) {
-    Mylog.e("HHLog", "MineItem")
     Row(
         modifier
             .fillMaxWidth()
@@ -137,7 +134,6 @@ fun MineItem(modifier: Modifier = Modifier,viewModel: MineViewModel,
 fun MineTopAvatar(modifier: Modifier = Modifier,viewModel: MineViewModel) {
     val context = LocalContext.current
     val fileBitmap by viewModel.fileBitmap.observeAsState()
-    Mylog.e("HHLog", "MineTopAvatar")
     fileBitmap?.let {
         var bitmap by remember { mutableStateOf(it) }
         LaunchedEffect (it){
@@ -149,7 +145,6 @@ fun MineTopAvatar(modifier: Modifier = Modifier,viewModel: MineViewModel) {
             }
         }
         Box(contentAlignment = Alignment.Center) {
-            Mylog.e("HHLog", "MineTopAvatarBox")
                 Image(
                     bitmap = bitmap.asImageBitmap(),
                     contentDescription = "me top background",
@@ -226,7 +221,6 @@ fun MineTopAvatar(modifier: Modifier = Modifier,viewModel: MineViewModel) {
 
 @Composable
 fun PicPopup(modifier: Modifier = Modifier,viewModel: MineViewModel) {
-    Mylog.e("HHLog", "PicPopup")
     val context = LocalContext.current
     val coroutineStore = rememberCoroutineScope()
     var f : File? = null

@@ -21,7 +21,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import androidx.work.Constraints
-import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.google.accompanist.insets.*
@@ -37,7 +36,6 @@ import com.hh.composeplayer.ui.*
 import com.hh.composeplayer.util.*
 import kotlinx.coroutines.launch
 import com.hh.composeplayer.util.CpNavigation.navHostController
-import com.hh.composeplayer.util.Mylog.e
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -55,7 +53,6 @@ class MainActivity : BaseActivity<MainViewModel>() {
             .permission(Permission.MANAGE_EXTERNAL_STORAGE)
             .request(object : OnPermissionCallback {
                 override fun onGranted(granted: List<String>, all: Boolean) {
-                    e("HHLog", "onGranted")
                     setContent {
                         MaterialTheme {
                             ProvideWindowInsets {
@@ -75,7 +72,6 @@ class MainActivity : BaseActivity<MainViewModel>() {
                     } else {
                         showToast("获取存储权限失败")
                     }
-                    e("HHLog", "onDenied")
                     setContent {
                         MaterialTheme {
                             ProvideWindowInsets {
@@ -133,7 +129,6 @@ class MainActivity : BaseActivity<MainViewModel>() {
 @OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
 @Composable
 private fun Scaffold(viewModel: MainViewModel) {
-    e("HHLog", "Scaffold")
     Surface(
         color = MaterialTheme.colors.surface,
         contentColor = contentColorFor(MaterialTheme.colors.surface)
@@ -141,7 +136,6 @@ private fun Scaffold(viewModel: MainViewModel) {
         AnimatedNavHost(navController = navHostController, startDestination = Model.Main.name) {
             //当前需要展示首页/列表页
             composable(Model.Setting.toString()) {
-                e("HHLog", "composableSetting")
                 CpSetting()
             }
             composable(Model.Search.toString(),
@@ -151,24 +145,19 @@ private fun Scaffold(viewModel: MainViewModel) {
                     fadeOut(animationSpec = tween(700))
                 }
             ) {
-                e("HHLog", "composableSearch")
                 SearchView()
             }
             composable(Model.Main.toString()) {
-                e("HHLog", "composableMain")
                 MainContent(viewModel = viewModel)
 
             }
             composable(Model.About.toString()) {
-                e("HHLog", "composableAbout")
                 About()
             }
             composable(Model.Collect.toString()) {
-                e("HHLog", "composableCollect")
                 Collect()
             }
             composable(Model.Start.toString()) {
-                e("HHLog", "composableProjcetAdress")
                 ProjectAddress()
             }
             composable("${Model.MovieDetail}/{ids}",
@@ -178,7 +167,6 @@ private fun Scaffold(viewModel: MainViewModel) {
                     fadeOut(animationSpec = tween(1500))
                 }
             ) {
-                e("HHLog", "composableMovieDetail")
                 val ids = it.arguments?.getString("ids", "")
                 MovieDetail(movieId = ids!!)
             }
@@ -190,7 +178,6 @@ private fun Scaffold(viewModel: MainViewModel) {
                 }
                 ),
             ) {
-                e("HHLog", "composableSearchResult")
                 val searchName = it.arguments?.getString("searchName", "")
                 SearchResult(searchName = searchName!!)
             }
@@ -214,11 +201,9 @@ private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel)
             ) { page ->
                 when (page) {
                     0 -> {
-                        e("HHLog", "MainContentHome")
                         Home()
                     }
                     1 -> {
-                        e("HHLog", "MainContentMine")
                         Mine()
                     }
                 }

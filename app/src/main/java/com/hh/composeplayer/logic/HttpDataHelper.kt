@@ -5,13 +5,7 @@ import com.google.gson.Gson
 import com.hh.composeplayer.api.ApiService
 import com.hh.composeplayer.api.TaskApi
 import com.hh.composeplayer.bean.*
-import com.hh.composeplayer.util.Mylog
 import com.hh.composeplayer.util.xmlToJson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
-import org.litepal.LitePal
-import org.litepal.extension.find
 
 
 /**

@@ -38,68 +38,37 @@ fun About(modifier: Modifier = Modifier) {
     }
     Column(modifier.fillMaxSize()) {
         CpTopBar(viewModel = aboutViewModel, title = stringResource(R.string.main_mine_about))
-        Column(
-            modifier
-                .fillMaxWidth()
-                .padding(15.dp)) {
-            Text(
-                stringResource(R.string.movie_api),
-                color = colorResource(R.color.text_color),
-                fontSize = 15.sp
-            )
-            Text(
-                aboutViewModel.apiUrl,
-                color = colorResource(R.color.forum_inactive_color),
-                fontSize = 14.sp
-            )
-        }
-        Divider(
-            modifier = modifier
-                .height(1.dp)
-                .fillMaxWidth()
+        AboutItem(textTitle = stringResource(R.string.movie_api),textContent = aboutViewModel.apiUrl)
+        AboutItem(textTitle = stringResource(R.string.about_email),textContent = aboutViewModel.emailAddress)
+        AboutItem(textTitle = stringResource(R.string.project_address),textContent = aboutViewModel.projectAddress,block = {
+            aboutViewModel.startCompose(Model.Start)
+        })
+    }
+}
+
+@Composable
+fun AboutItem(modifier: Modifier = Modifier,textTitle : String,textContent : String,block:()->Unit = {}) {
+    Column(
+        modifier
+            .fillMaxWidth()
+            .clickable {
+                block()
+            }
+            .padding(15.dp)) {
+        Text(
+            textTitle,
+            color = colorResource(R.color.text_color),
+            fontSize = 15.sp
         )
-        Column(
-            modifier
-                .fillMaxWidth()
-                .padding(15.dp)) {
-            Text(
-                stringResource(R.string.about_email),
-                color = colorResource(R.color.text_color),
-                fontSize = 15.sp
-            )
-            Text(
-                aboutViewModel.emailAddress,
-                color = colorResource(R.color.forum_inactive_color),
-                fontSize = 14.sp
-            )
-        }
-        Divider(
-            modifier = modifier
-                .height(1.dp)
-                .fillMaxWidth()
-        )
-        Column(
-            modifier
-                .fillMaxWidth()
-                .clickable {
-                    aboutViewModel.startCompose(Model.Start)
-                }
-                .padding(15.dp)) {
-            Text(
-                stringResource(R.string.project_address),
-                color = colorResource(R.color.text_color),
-                fontSize = 15.sp
-            )
-            Text(
-                aboutViewModel.projectAddress,
-                color = colorResource(R.color.forum_inactive_color),
-                fontSize = 14.sp
-            )
-        }
-        Divider(
-            modifier = modifier
-                .height(1.dp)
-                .fillMaxWidth()
+        Text(
+            textContent,
+            color = colorResource(R.color.forum_inactive_color),
+            fontSize = 14.sp
         )
     }
+    Divider(
+        modifier = modifier
+            .height(1.dp)
+            .fillMaxWidth()
+    )
 }

@@ -10,7 +10,6 @@ import com.google.accompanist.pager.PagerState
 import com.hh.composeplayer.base.BaseViewModel
 import com.hh.composeplayer.base.launch
 import com.hh.composeplayer.bean.*
-import com.hh.composeplayer.util.Mylog
 import com.hh.composeplayer.util.boxProgress
 import org.litepal.LitePal
 import org.litepal.extension.findAll

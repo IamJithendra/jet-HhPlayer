@@ -9,7 +9,6 @@ import androidx.paging.cachedIn
 import com.hh.composeplayer.base.BaseViewModel
 import com.hh.composeplayer.base.launch
 import com.hh.composeplayer.bean.Video
-import com.hh.composeplayer.util.Mylog.e
 import com.hh.composeplayer.util.boxProgress
 import kotlinx.coroutines.flow.*
 
@@ -27,7 +26,6 @@ class MovieListViewModel : BaseViewModel() {
     private val pageSize = 20
 
     fun getMovieList(state : Int,id:Long) : Flow<PagingData<Video>> {
-        e("HHLog", "getMovieList")
         return  if(state == 0){
             repository.getMoviePagingData(id,pageSize).cachedIn(viewModelScope)
         } else{

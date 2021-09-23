@@ -49,7 +49,6 @@ import kotlinx.coroutines.withContext
  */
 @Composable
 fun SearchView(modifier: Modifier = Modifier) {
-    Mylog.e("HHLog", "SearchView")
     val searchViewModel: SearchViewModel = viewModel()
     LaunchedEffect(searchViewModel) {
         withContext(Dispatchers.IO) {
@@ -65,7 +64,6 @@ fun SearchView(modifier: Modifier = Modifier) {
 
 @Composable
 fun SearchContent(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
-    Mylog.e("HHLog", "SearchContent")
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -149,7 +147,6 @@ fun SearchContent(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
 
 @Composable
 private fun SearchTopBar(modifier: Modifier = Modifier, viewModel: SearchViewModel) {
-    Mylog.e("HHLog", "SearchTopBar")
     val paddingValues = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars)
     TopAppBar(
         {
