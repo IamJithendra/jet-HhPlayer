@@ -32,6 +32,7 @@ Go to the [Releases](https://github.com/yellowhai/HhPlayer/releases) to download
   - App Startup - Provides a straightforward, performant way to initialize components at application startup.
   - Paging3 - Paging list data display
   - workManager - backstage data update 
+  - DataStore - Store data asynchronously, consistently
 - Architecture
   - MVVM Architecture (Declarative View - ViewModel - Model)
   - Repository pattern
