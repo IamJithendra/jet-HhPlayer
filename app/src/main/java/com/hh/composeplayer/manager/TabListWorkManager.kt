@@ -20,6 +20,7 @@ import java.util.*
  * @Description: 类描述
  * @Author: Hai Huang
  * @CreateDate: 2021/9/13  8:42
+ * 这是由电池优化和/或打盹模式引起的问题，尤其是当您使用中国Rom如Oxygen OS，MIUI等时.在Stock Rom上测试你的应用程序，这将完美无缺 . 根本没有问题 . 这是因为这些中文ROM启用了自定义节电技术，可以防止任何后台服务运行 .
  * 处理不同API级别的兼容性问题
  * 考虑设备运行状况以执行任务
  * 我们可以添加网络约束

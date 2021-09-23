@@ -20,10 +20,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
+import androidx.work.*
 import com.google.accompanist.insets.*
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -40,7 +37,6 @@ import com.hh.composeplayer.util.CpNavigation.navHostController
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class MainActivity : BaseActivity<MainViewModel>() {
@@ -105,24 +101,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
         initWorkManager()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        android.os.Process.killProcess(android.os.Process.myPid())
-    }
-
     private fun initWorkManager() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)  // 网络状态
-            .setRequiresBatteryNotLow(true)                 // 不在电量不足时执行
-//            .setRequiresCharging(true)                      // 在充电时执行
-//            .setRequiresStorageNotLow(true)                 // 不在存储容量不足时执行
-//        .setRequiresDeviceIdle(true)                    // 在待机状态下执行，需要 API 23
-            .build()
         val request = PeriodicWorkRequest
             .Builder(TabListWorkManager::class.java, 16, TimeUnit.MINUTES)
-            .setConstraints(constraints)
             .build()
-        WorkManager.getInstance(HhCpApp.context).enqueue(request)
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork("UpdateTabList",
+            ExistingPeriodicWorkPolicy.KEEP,request)
     }
 }
 
