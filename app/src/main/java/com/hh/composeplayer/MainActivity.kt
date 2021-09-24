@@ -173,7 +173,6 @@ private fun Scaffold(viewModel: MainViewModel) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel) {
-    e("HHLog","MainContent")
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(viewModel) {
         viewModel.appColor = SettingUtil.getColor()
@@ -187,11 +186,9 @@ private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel)
             ) { page ->
                 when (page) {
                     0 -> {
-                        e("HHLog","Home")
                         Home()
                     }
                     1 -> {
-                        e("HHLog","Mine")
                         Mine()
                     }
                 }
