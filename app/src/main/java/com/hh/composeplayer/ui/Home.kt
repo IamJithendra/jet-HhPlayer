@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -100,7 +99,7 @@ private fun HomeContent(
     SwipeRefresh(rememberSwipeRefreshState(viewModel.isRefreshing), {
         movieList.refresh()
     }) {
-        SwipeRefreshItem(modifier, viewModel, movieList, movieList.itemCount)
+        SwipeRefreshItem(modifier, viewModel,homeViewModel, movieList)
     }
 }
 
@@ -109,8 +108,8 @@ private fun HomeContent(
 fun SwipeRefreshItem(
     modifier: Modifier = Modifier,
     viewModel: MovieListViewModel,
+    homeViewModel: HomeViewModel,
     movieList: LazyPagingItems<Video>,
-    itemCount : Int
 ) {
     BoxWithConstraints {
         when(movieList.loadState.refresh){
@@ -125,19 +124,10 @@ fun SwipeRefreshItem(
                 }
             }
             is LoadState.Loading->{
-                    Box(
-                        modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Column (horizontalAlignment = Alignment.CenterHorizontally){
-                            CircularProgressIndicator()
-                            Text(boxProgressText,
-                                modifier.padding(0.dp, 8.dp, 0.dp, 0.dp))
-                        }
-                    }
+                BoxProgressN(Color(homeViewModel.appColor))
             }
             else ->{
-                when (itemCount) {
+                when (movieList.itemCount) {
                     0 -> {
                         LazyColumn{
                             item {

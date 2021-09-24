@@ -8,10 +8,15 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -19,7 +24,10 @@ import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.TopAppBar
+import com.hh.composeplayer.R
 import com.hh.composeplayer.base.BaseViewModel
+import com.hh.composeplayer.ui.theme.Purple500
+import com.hh.composeplayer.ui.theme.Teal200
 import com.hh.composeplayer.ui.theme.shimmerHighLight
 import com.skydoves.landscapist.CircularReveal
 import com.skydoves.landscapist.ShimmerParams
@@ -44,15 +52,14 @@ fun CpBottomBar(modifier: Modifier = Modifier, content: @Composable RowScope.() 
                 .fillMaxWidth()
                 .background(Color.White)
                 .padding(4.dp, 2.dp)
-                .navigationBarsPadding()
-            ,
+                .navigationBarsPadding(),
             content = content
         )
     }
 }
 
 @Composable
-fun ErrorBox(modifier: Modifier = Modifier,@StringRes titleId : Int) {
+fun ErrorBox(modifier: Modifier = Modifier, @StringRes titleId: Int) {
     Box(
         modifier, Alignment.Center
     ) {
@@ -61,7 +68,7 @@ fun ErrorBox(modifier: Modifier = Modifier,@StringRes titleId : Int) {
 }
 
 @Composable
-fun CpTopBar(modifier: Modifier = Modifier,viewModel : BaseViewModel,title : String){
+fun CpTopBar(modifier: Modifier = Modifier, viewModel: BaseViewModel, title: String) {
     TopAppBar(
         {
             Text(title, color = Color.White)
@@ -73,9 +80,10 @@ fun CpTopBar(modifier: Modifier = Modifier,viewModel : BaseViewModel,title : Str
             IconButton(
                 onClick = {
                     viewModel.onBackPressed()
+                    boxProgress = false
                 }
             ) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "back",tint = Color.White)
+                Icon(Icons.Filled.ArrowBack, contentDescription = "back", tint = Color.White)
             }
         },
         elevation = 0.dp,
@@ -89,7 +97,7 @@ fun NetworkImage(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
     bitmapPalette: BitmapPalette? = null,
-    highlightColor : Color = shimmerHighLight
+    highlightColor: Color = shimmerHighLight
 ) {
     CoilImage(
         imageModel = url,
@@ -103,14 +111,19 @@ fun NetworkImage(
             dropOff = 0.65f
         ),
         failure = {
-            Box(modifier.fillMaxSize()){
-                Text(
-                    text = "image request failed.",
-                    style = MaterialTheme.typography.body2,
-                    textAlign = TextAlign.Center,
-                    modifier = modifier.align(Alignment.Center)
-                )
+            val color = remember {
+                mutableStateOf(Purple500)
             }
+            LaunchedEffect(color){
+                color.value = Color(SettingUtil.getColor())
+            }
+            Image(
+                painter = painterResource(R.drawable.ic_launcher_foreground),
+                contentDescription = "movie Image",
+                contentScale = ContentScale.FillBounds,
+                modifier = modifier.height(200.dp),
+                colorFilter = ColorFilter.tint(color.value)
+            )
         }
     )
 }

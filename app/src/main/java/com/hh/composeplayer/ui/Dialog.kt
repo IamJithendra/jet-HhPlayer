@@ -10,19 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.DialogHost
-import com.hh.composeplayer.MainViewModel
-import com.hh.composeplayer.R
-import com.hh.composeplayer.util.boxProgress
-import com.hh.composeplayer.util.boxProgressText
-import com.hh.composeplayer.util.isShowProgressDialog
-import com.hh.composeplayer.util.progressDialogText
+import com.hh.composeplayer.ui.theme.Purple500
+import com.hh.composeplayer.util.*
 
 /**
  * @ProjectName: HelloComPose
@@ -58,6 +51,7 @@ fun DialogProgress() {
     }
 }
 
+@Preview
 @Composable
 fun BoxProgress() {
     if(boxProgress){
@@ -66,7 +60,13 @@ fun BoxProgress() {
             contentAlignment = Alignment.Center,
         ) {
             Column (horizontalAlignment = Alignment.CenterHorizontally){
-                CircularProgressIndicator()
+                val color = remember {
+                    mutableStateOf(Purple500)
+                }
+                LaunchedEffect(color){
+                    color.value = Color(SettingUtil.getColor())
+                }
+                CircularProgressIndicator(color = color.value)
                 Text(boxProgressText,
                     Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp))
             }
@@ -74,4 +74,16 @@ fun BoxProgress() {
     }
 }
 
-
+@Composable
+fun BoxProgressN(color: Color) {
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column (horizontalAlignment = Alignment.CenterHorizontally){
+                CircularProgressIndicator(color = color)
+                Text(boxProgressText,
+                    Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp))
+            }
+        }
+}
