@@ -1,7 +1,7 @@
 <h1>HhPlayer</h1></br>
 <p>  
-A demo film and television app using compose based on modern Android tech-stacks and MVVM architecture. Fetching data from the network and integrating persisted data in the database via repository pattern.
-Declarative UI version of the film and television using compose.
+HHplayer app using Jetpack compose based on modern Android tech-stacks and MVVM architecture. Fetching data from the network and integrating persisted data in the database via repository pattern. 
+Declarative UI version using compose.
 </p>
 </br>
 
