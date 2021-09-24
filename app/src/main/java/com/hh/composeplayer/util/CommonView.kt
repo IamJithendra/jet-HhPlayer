@@ -88,7 +88,8 @@ fun NetworkImage(
     url: String,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
-    bitmapPalette: BitmapPalette? = null
+    bitmapPalette: BitmapPalette? = null,
+    highlightColor : Color = shimmerHighLight
 ) {
     CoilImage(
         imageModel = url,
@@ -98,7 +99,7 @@ fun NetworkImage(
         bitmapPalette = bitmapPalette,
         shimmerParams = ShimmerParams(
             baseColor = MaterialTheme.colors.background,
-            highlightColor = shimmerHighLight,
+            highlightColor = highlightColor,
             dropOff = 0.65f
         ),
         failure = {

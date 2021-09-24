@@ -34,6 +34,7 @@ import com.hh.composeplayer.ui.*
 import com.hh.composeplayer.util.*
 import kotlinx.coroutines.launch
 import com.hh.composeplayer.util.CpNavigation.navHostController
+import com.hh.composeplayer.util.Mylog.e
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -119,6 +120,9 @@ private fun Scaffold(viewModel: MainViewModel) {
         contentColor = contentColorFor(MaterialTheme.colors.surface)
     ) {
         AnimatedNavHost(navController = navHostController, startDestination = Model.Main.name) {
+            composable(Model.Main.toString()) {
+                MainContent(viewModel = viewModel)
+            }
             //当前需要展示首页/列表页
             composable(Model.Setting.toString()) {
                 CpSetting()
@@ -131,10 +135,6 @@ private fun Scaffold(viewModel: MainViewModel) {
                 }
             ) {
                 SearchView()
-            }
-            composable(Model.Main.toString()) {
-                MainContent(viewModel = viewModel)
-
             }
             composable(Model.About.toString()) {
                 About()
@@ -173,8 +173,9 @@ private fun Scaffold(viewModel: MainViewModel) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel) {
+    e("HHLog","MainContent")
     val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect("mainViewModel") {
+    LaunchedEffect(viewModel) {
         viewModel.appColor = SettingUtil.getColor()
     }
     Box {
@@ -186,9 +187,11 @@ private fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel)
             ) { page ->
                 when (page) {
                     0 -> {
+                        e("HHLog","Home")
                         Home()
                     }
                     1 -> {
+                        e("HHLog","Mine")
                         Mine()
                     }
                 }
