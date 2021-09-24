@@ -26,12 +26,9 @@ import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.color.colorChooser
 import com.hh.composeplayer.R
 import com.hh.composeplayer.ui.viewmodel.SettingViewModel
-import com.hh.composeplayer.util.CacheDataManager
+import com.hh.composeplayer.util.*
 import com.hh.composeplayer.util.ColorUtil.ACCENT_COLORS
 import com.hh.composeplayer.util.ColorUtil.PRIMARY_COLORS_SUB
-import com.hh.composeplayer.util.CpTopBar
-import com.hh.composeplayer.util.SettingUtil
-import com.hh.composeplayer.util.showMessage
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -68,9 +65,9 @@ fun CpSetting(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .clickable {
                     content.showMessage(
-                        "确定清理缓存吗",
-                        positiveButtonText = "清理",
-                        negativeButtonText = "取消",
+                        content.stringResource(R.string.confirm_clear_cache),
+                        positiveButtonText = content.stringResource(R.string.confirm),
+                        negativeButtonText = content.stringResource(R.string.cancel),
                         positiveAction = {
                             CacheDataManager.clearAllCache(content)
                             settingViewModel.caCheSize =
@@ -95,9 +92,9 @@ fun CpSetting(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .clickable {
                     content.showMessage(
-                        "确定要退出程序吗",
-                        positiveButtonText = "退出",
-                        negativeButtonText = "取消",
+                        content.stringResource(R.string.confirm_exit_app),
+                        positiveButtonText = content.stringResource(R.string.exit),
+                        negativeButtonText = content.stringResource(R.string.cancel),
                         positiveAction = {
                             settingViewModel.onExit()
                         })

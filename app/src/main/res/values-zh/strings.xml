@@ -29,7 +29,7 @@
     <string name="entry1">Hello world.</string>
     <string name="entry2">Good Job</string>
     <string name="permissions_camera_error">获取拍照权限失败</string>
-    <string name="permissions_cm_error">被永久拒绝授权，请手动授予拍照权限</string>
+    <string name="permissions_cm_error">拍照权限被永久拒绝授权，请手动授予拍照权限</string>
     <string name="camera_error">拍照异常，请重试</string>
     <string name="entry3">What Can I Do For You?</string>
     <string name="loading_error_refresh">加载失败,点击重试</string>

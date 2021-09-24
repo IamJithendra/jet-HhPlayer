@@ -27,6 +27,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.hh.composeplayer.HhCpApp.Companion.context
 import com.hh.composeplayer.base.BaseActivity
 import com.hh.composeplayer.bean.Model
 import com.hh.composeplayer.manager.TabListWorkManager
@@ -64,11 +65,11 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
                 override fun onDenied(denied: List<String>, never: Boolean) {
                     if (never) {
-                        showToast("被永久拒绝授权，请手动授予存储权限")
+                        showToast(context.stringResource(R.string.get_storage_permission_manually))
                         // 如果是被永久拒绝就跳转到应用权限系统设置页面
                         XXPermissions.startPermissionActivity(this@MainActivity, denied)
                     } else {
-                        showToast("获取存储权限失败")
+                        showToast(context.stringResource(R.string.get_storage_permission_error))
                     }
                     setContent {
                         MaterialTheme {
@@ -91,7 +92,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 } else {
                     //是主页
                     if (System.currentTimeMillis() - exitTime > 2000) {
-                        showToast("再按一次退出程序")
+                        showToast(context.stringResource(R.string.press_again_to_exit))
                         exitTime = System.currentTimeMillis()
                     } else {
                         finish()

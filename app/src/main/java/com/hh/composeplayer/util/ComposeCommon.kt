@@ -83,7 +83,7 @@ fun Modifier.pagerTabIndicatorOffsetH(
 
     val currentTab = tabPositions[pagerState.currentPage]
     val targetPage = pagerState.targetPage
-    val targetTab = targetPage?.let { tabPositions.getOrNull(it) }
+    val targetTab = targetPage.let { tabPositions.getOrNull(it) }
 
     if (targetTab != null) {
         // The distance between the target and current page. If the pager is animating over many

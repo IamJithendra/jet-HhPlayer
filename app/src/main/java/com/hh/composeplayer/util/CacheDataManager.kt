@@ -1,6 +1,7 @@
 package com.hh.composeplayer.util
 import android.content.Context
 import android.os.Environment
+import com.hh.composeplayer.R
 import java.io.File
 import java.math.BigDecimal
 
@@ -13,7 +14,6 @@ object CacheDataManager {
         if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
             cacheSize += getFolderSize(context.externalCacheDir)
         }
-        cacheSize += getFolderSize(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES+"/photo"))
         return getFormatSize(cacheSize.toDouble())
     }
 
@@ -24,14 +24,12 @@ object CacheDataManager {
                 ?.let { it1 -> deleteDir(it1) }
             if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                 if (it.externalCacheDir == null) {
-                    it.showToast("清理缓存失败")
+                    it.showToast(context.stringResource(R.string.clear_cache_error))
                 }
                 return
             }
             it.externalCacheDir?.let { file ->
-                if(deleteDir(file)){
-                    it.showToast("清理缓存成功")
-                }
+                deleteDir(file)
             }
         }
     }
