@@ -2,7 +2,7 @@ package com.hh.composeplayer.bean
 
 /**
  * @ProjectName: HelloComPose
- * @Package: com.hh.hellocompose.bean
+ * @Package: com.hh.composeplayer.bean
  * @Description: 类描述
  * @Author: Hai Huang
  * @CreateDate: 2021/8/26  10:03

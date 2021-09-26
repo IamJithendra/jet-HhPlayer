@@ -10,8 +10,8 @@ import retrofit2.Converter
 import java.io.IOException
 
 /**
- * @ProjectName: ZngjMvvM
- * @Package: com.zngj.zngjmvvm.util.http.converter
+ * @ProjectName: HHPlayer
+ * @Package: com.hh.composeplayer.api.converter
  * @Description: 类描述
  * @Author: huanghai
  * @CreateDate: 2021/1/15  10:28

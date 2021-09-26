@@ -5,8 +5,8 @@ import com.hh.composeplayer.api.gsonfactory.GsonConverterFactory.Companion.creat
 import retrofit2.Retrofit
 
 /**
- * @ProjectName: ZngjMvvM
- * @Package: com.zngj.zngjmvvm.api
+ * @ProjectName: HHPlayer
+ * @Package: com.hh.composeplayer.api
  * @Description: 类描述
  * @Author: huanghai
  * @CreateDate: 2021/1/15  12:00

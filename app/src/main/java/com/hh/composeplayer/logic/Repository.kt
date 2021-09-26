@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 
 /**
  * @ProjectName: HelloComPose
- * @Package: com.hh.hellocompose.logic
+ * @Package: com.hh.composeplayer.logic
  * @Description: 类描述
  * @Author: Hai Huang
  * @CreateDate: 2021/8/16  15:30

@@ -1,13 +1,11 @@
 package com.hh.composeplayer.util
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.hh.composeplayer.HhCpApp
 import com.hh.composeplayer.R
-import com.hh.composeplayer.base.BaseActivity
 
 /**
  * @ProjectName: HelloComPose

@@ -46,7 +46,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -270,8 +269,7 @@ fun PicPopup(modifier: Modifier = Modifier,viewModel: MineViewModel) {
         DropdownMenuItem(onClick = {
             // 从相机中获得照片
             val intentCamera = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val imageFileName = String.format("JPEG_%s.jpg", timeStamp)
+            val imageFileName = String.format("JPEG_%s.jpg", HhUtil.formatDate(Date(),"yyyyMMdd_HHmmss"))
             f = File(context.getExternalFilesDir("$DIRECTORY_PICTURES/photo"), imageFileName)
             val photoUri = FileProvider.getUriForFile(context, context.packageName + ".provider", f!!)
             intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)

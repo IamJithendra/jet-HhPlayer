@@ -24,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * @ProjectName: HelloComPose
+ * @ProjectName: HHPlayer
  * @Package: com.hh.composeplayer.ui
  * @Description: 类描述
  * @Author: Hai Huang
