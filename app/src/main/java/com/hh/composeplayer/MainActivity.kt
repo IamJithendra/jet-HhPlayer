@@ -104,8 +104,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
     }
 
     private fun initWorkManager() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
         val request = PeriodicWorkRequest
             .Builder(TabListWorkManager::class.java, 16, TimeUnit.MINUTES)
+            .setConstraints(constraints)
             .build()
         WorkManager.getInstance(this).enqueueUniquePeriodicWork("UpdateTabList",
             ExistingPeriodicWorkPolicy.KEEP,request)
