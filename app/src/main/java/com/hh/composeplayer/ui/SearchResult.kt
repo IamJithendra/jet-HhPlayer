@@ -40,7 +40,7 @@ fun SearchResult(modifier: Modifier = Modifier, searchName: String) {
             }
         }
     Column(modifier.fillMaxSize()) {
-        CpTopBar(modifier,viewModel, viewModel.searchName.value)
+        CpTopBar(modifier,viewModel, viewModel.searchName.value!!)
         SearchResultContent(modifier, viewModel)
     }
     BoxProgress()

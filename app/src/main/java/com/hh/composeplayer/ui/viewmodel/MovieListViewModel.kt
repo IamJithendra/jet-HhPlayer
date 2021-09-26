@@ -32,19 +32,4 @@ class MovieListViewModel : BaseViewModel() {
             repository.getMoviePagingData(id,pageSize).cachedIn(viewModelScope)
         }
     }
-
-    fun movieListRefresh(state : Int,id:Long){
-        launch({
-            isRefreshing = true
-            boxProgress = true
-            getMovieList(state,id)
-        },{
-            isRefreshing = false
-            boxProgress = false
-        },{
-            isRefreshing = false
-            boxProgress = false
-            showToast(it.toString())
-        })
-    }
 }
