@@ -41,6 +41,7 @@ import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import java.util.concurrent.TimeUnit
 
+const val UPDATE_TAB_LIST = "UpdateTabList"
 class MainActivity : BaseActivity<MainViewModel>() {
     var exitTime = 0L
 
@@ -111,7 +112,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
             .Builder(TabListWorkManager::class.java, 16, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .build()
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork("UpdateTabList",
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(UPDATE_TAB_LIST,
             ExistingPeriodicWorkPolicy.KEEP,request)
     }
 }
