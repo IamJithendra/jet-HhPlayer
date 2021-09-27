@@ -1,5 +1,6 @@
 package com.hh.composeplayer.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
@@ -18,6 +19,7 @@ import androidx.paging.compose.items
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.hh.composeplayer.R
+import com.hh.composeplayer.bean.Model
 import com.hh.composeplayer.ui.viewmodel.SearchResultViewModel
 import com.hh.composeplayer.util.*
 import kotlinx.coroutines.Dispatchers
@@ -34,13 +36,13 @@ import kotlinx.coroutines.withContext
 fun SearchResult(modifier: Modifier = Modifier, searchName: String) {
     val viewModel: SearchResultViewModel = viewModel()
     viewModel.searchName.value = searchName
-        LaunchedEffect(viewModel) {
-            withContext(Dispatchers.IO) {
-                viewModel.appColor = SettingUtil.getColor()
-            }
+    LaunchedEffect(viewModel) {
+        withContext(Dispatchers.IO) {
+            viewModel.appColor = SettingUtil.getColor()
         }
+    }
     Column(modifier.fillMaxSize()) {
-        CpTopBar(modifier,viewModel, viewModel.searchName.value!!)
+        CpTopBar(modifier, viewModel, viewModel.searchName.value!!)
         SearchResultContent(modifier, viewModel)
     }
     BoxProgress()
@@ -61,7 +63,8 @@ fun SearchResultContent(modifier: Modifier = Modifier, viewModel: SearchResultVi
                     ErrorBox(
                         modifier
                             .height(maxHeight)
-                            .width(maxWidth),R.string.no_network)
+                            .width(maxWidth), R.string.no_network
+                    )
                     boxProgress = false
                 }
                 else -> {
@@ -70,13 +73,22 @@ fun SearchResultContent(modifier: Modifier = Modifier, viewModel: SearchResultVi
                             ErrorBox(
                                 modifier
                                     .height(maxHeight)
-                                    .width(maxWidth),R.string.no_data)
+                                    .width(maxWidth), R.string.no_data
+                            )
                         }
                         else -> {
                             LazyColumn(modifier) {
                                 items(searchResultList) {
-                                    Row(modifier.padding(12.dp)) {
-                                        it?.let {
+                                    it?.let {
+                                        Row(
+                                            modifier
+                                                .clickable {
+                                                    viewModel.startComposeBundle(
+                                                        Model.MovieDetail,
+                                                        it.id.toString()
+                                                    )
+                                                }
+                                                .padding(12.dp)) {
                                             Text(
                                                 it.name!!, fontSize = 14.sp,
                                                 maxLines = 1,
@@ -90,13 +102,14 @@ fun SearchResultContent(modifier: Modifier = Modifier, viewModel: SearchResultVi
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis,
                                             )
+
                                         }
+                                        Divider(
+                                            modifier
+                                                .fillMaxWidth()
+                                                .padding(start = 12.dp)
+                                        )
                                     }
-                                    Divider(
-                                        modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 12.dp)
-                                    )
                                 }
                             }
                         }

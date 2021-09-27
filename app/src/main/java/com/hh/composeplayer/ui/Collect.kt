@@ -44,10 +44,12 @@ import org.litepal.extension.findAll
 fun Collect(modifier: Modifier = Modifier) {
     val collectViewModel: CollectViewModel = viewModel()
     LaunchedEffect(collectViewModel) {
-        collectViewModel.collectData.addAll(withContext(Dispatchers.IO) {
-            collectViewModel.appColor = SettingUtil.getColor()
-            LitePal.findAll<CollectBusK>()
-        })
+        if(collectViewModel.collectData.size == 0){
+            collectViewModel.collectData.addAll(withContext(Dispatchers.IO) {
+                collectViewModel.appColor = SettingUtil.getColor()
+                LitePal.findAll<CollectBusK>()
+            })
+        }
     }
     Column(modifier.fillMaxSize()) {
         CpTopBar(modifier, collectViewModel, stringResource(R.string.main_mine_collect))
