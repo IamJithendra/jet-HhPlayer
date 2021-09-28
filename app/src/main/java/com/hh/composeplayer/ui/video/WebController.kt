@@ -23,7 +23,7 @@ import kotlinx.coroutines.async
 class WebController {
     private var agentWeb: AgentWeb? = null
 
-    suspend fun loadUrl(activity: AppCompatActivity, url: String?, container: ViewGroup, coroutineScope: CoroutineScope) {
+     fun loadUrl(activity: AppCompatActivity, url: String?, container: ViewGroup) {
         agentWeb = AgentWeb.with(activity)
             .setAgentWebParent(
                 container,
@@ -33,7 +33,7 @@ class WebController {
                 )
             )
             .setCustomIndicator(CustomIndicator(container.context))
-            .setWebViewClient(getWebViewClient(coroutineScope))
+            .setWebViewClient(getWebViewClient())
             .createAgentWeb()
             .ready()
             .go(url)
@@ -59,22 +59,18 @@ class WebController {
     }
 
 
-    private suspend fun getWebViewClient(coroutineScope: CoroutineScope): WebViewClient {
-        val job = coroutineScope.async(IO) {
-             val web =    object : WebViewClient() {
-                    @SuppressLint("WebViewClientOnReceivedSslError")
-                    override fun onReceivedSslError(
-                        view: WebView?,
-                        handler: SslErrorHandler,
-                        error: SslError?
-                    ) {
-                        handler.proceed()
-                        onResume()
-                    }
-                }
-            web
+    private fun getWebViewClient(): WebViewClient {
+        return  object : WebViewClient() {
+            @SuppressLint("WebViewClientOnReceivedSslError")
+            override fun onReceivedSslError(
+                view: WebView?,
+                handler: SslErrorHandler,
+                error: SslError?
+            ) {
+                handler.proceed()
+                onResume()
+            }
         }
-        return job.await()
     }
 
     inner class CustomIndicator @JvmOverloads constructor(

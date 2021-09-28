@@ -1,6 +1,5 @@
 package com.hh.composeplayer.ui
 
-import android.webkit.WebView
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,8 +47,7 @@ fun ProjectAddress(modifier: Modifier = Modifier) {
                 WebController().loadUrl(
                     content as MainActivity,
                     projectAddressViewModel.projectAdress,
-                    it,
-                    this
+                    it
                 )
             }
         }

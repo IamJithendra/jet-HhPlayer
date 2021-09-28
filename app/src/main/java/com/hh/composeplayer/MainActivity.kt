@@ -35,7 +35,6 @@ import com.hh.composeplayer.ui.*
 import com.hh.composeplayer.util.*
 import kotlinx.coroutines.launch
 import com.hh.composeplayer.util.CpNavigation.navHostController
-import com.hh.composeplayer.util.Mylog.e
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions

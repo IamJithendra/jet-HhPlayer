@@ -71,8 +71,7 @@ fun MovieDetail(modifier: Modifier = Modifier, movieId: String = "") {
         )
         AndroidView(
             {
-                val fragmentLayout = FrameLayout(it)
-                fragmentLayout
+                FrameLayout(it)
             },
             modifier
                 .fillMaxWidth()
@@ -84,8 +83,7 @@ fun MovieDetail(modifier: Modifier = Modifier, movieId: String = "") {
                     WebController().loadUrl(
                         content as MainActivity,
                         viewModel.anthology[episCode].playUrl,
-                        it,
-                        this
+                        it
                     )
                     val back = ImageView(it.context)
                     back.setImageResource(R.drawable.ic_baseline_arrow_back_ios_24)
@@ -105,30 +103,30 @@ fun MovieDetail(modifier: Modifier = Modifier, movieId: String = "") {
             }
 
         }
+        viewModel.movieBean.value.name?.let {
+            Text(
+                "${viewModel.movieBean.value.name}",
+                fontSize = 20.sp,
+                modifier = modifier.padding(top = 16.dp, start = 16.dp),
+                color = colorResource(R.color.text_color),
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                "${viewModel.movieBean.value.area} ${viewModel.movieBean.value.year}",
+                fontSize = 16.sp,
+                modifier = modifier.padding(top = 10.dp, start = 16.dp)
+            )
 
-        Text(
-            "${viewModel.movieBean.value.name}",
-            fontSize = 20.sp,
-            modifier = modifier.padding(top = 16.dp, start = 16.dp),
-            color = colorResource(R.color.text_color),
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold
-        )
+            MovieDetailFavorite(viewModel = viewModel)
 
-        Text(
-            "${viewModel.movieBean.value.area} ${viewModel.movieBean.value.year}",
-            fontSize = 16.sp,
-            modifier = modifier.padding(top = 10.dp, start = 16.dp)
-        )
+            MovieDetailAnthology(viewModel = viewModel)
 
-        MovieDetailFavorite(viewModel = viewModel)
-
-        MovieDetailAnthology(viewModel = viewModel)
-
-        Text(
-            "简介:    ${viewModel.movieBean.value.des}",
-            fontSize = 14.sp, modifier = modifier.padding(top = 20.dp, start = 16.dp)
-        )
+            Text(
+                "简介:    ${viewModel.movieBean.value.des}",
+                fontSize = 14.sp, modifier = modifier.padding(top = 20.dp, start = 16.dp)
+            )
+        }
     }
 }
 
@@ -170,7 +168,7 @@ fun MovieDetailAnthology(modifier: Modifier = Modifier, viewModel: MovieDetailVi
                         .clip(
                             RoundedCornerShape(6.dp)
                         )
-                        .background(colorResource(id = R.color.white))
+                        .background(Color.White)
                         .clickable {
                             viewModel.episode.value = index
                         }
