@@ -73,12 +73,21 @@ fun Home(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MovieListView(modifier: Modifier = Modifier, homeViewModel: HomeViewModel) {
-    homeViewModel.pagerState.pageCount = homeViewModel.movieTabList.size
-    HorizontalPager(state = homeViewModel.pagerState, modifier.fillMaxSize()) { page ->
-        when (page) {
-            homeViewModel.movieTabList[page].pageId -> {
-                HomeContent(modifier, homeViewModel, page)
+    if (homeViewModel.movieTabList.size > 0) {
+        homeViewModel.pagerState.pageCount = homeViewModel.movieTabList.size
+        HorizontalPager(state = homeViewModel.pagerState, modifier.fillMaxSize()) { page ->
+            when (page) {
+                homeViewModel.movieTabList[page].pageId -> {
+                    HomeContent(modifier, homeViewModel, page)
+                }
             }
+        }
+    } else {
+        if (!boxProgress) {
+            ErrorBox(
+                modifier
+                    .fillMaxSize(), R.string.no_network
+            )
         }
     }
 }

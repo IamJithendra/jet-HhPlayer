@@ -103,7 +103,7 @@ fun MovieDetail(modifier: Modifier = Modifier, movieId: String = "") {
             }
 
         }
-        viewModel.movieBean.value.name?.let {
+        viewModel.movieBean.value.name?.run {
             Text(
                 "${viewModel.movieBean.value.name}",
                 fontSize = 20.sp,
