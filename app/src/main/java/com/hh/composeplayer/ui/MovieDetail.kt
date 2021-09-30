@@ -58,8 +58,8 @@ fun MovieDetail(modifier: Modifier = Modifier, movieId: String = "") {
     LaunchedEffect(viewModel) {
         withContext(IO) {
             viewModel.appColor = SettingUtil.getColor()
+            viewModel.getMovieDetail(movieId)
         }
-        viewModel.getMovieDetail(movieId)
     }
     val content = LocalContext.current
 
