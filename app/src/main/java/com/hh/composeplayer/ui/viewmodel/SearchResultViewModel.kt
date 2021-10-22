@@ -4,12 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.hh.composeplayer.base.BaseViewModel
 import com.hh.composeplayer.bean.Video
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 
 /**
  * @ProjectName: HelloComPose
@@ -25,6 +25,6 @@ class SearchResultViewModel : BaseViewModel() {
     var isRefreshing by mutableStateOf(false)
 
     fun getSearchResult() : Flow<PagingData<Video>> {
-        return repository.getSearchResultList(searchName.value!!).cachedIn(viewModelScope)
+        return repository.getSearchResultList(searchName.value!!).flowOn(IO)
     }
 }

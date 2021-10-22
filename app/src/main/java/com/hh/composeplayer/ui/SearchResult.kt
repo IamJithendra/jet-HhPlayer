@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.hh.composeplayer.R
@@ -41,7 +42,7 @@ fun SearchResult(modifier: Modifier = Modifier, searchName: String) {
             viewModel.appColor = SettingUtil.getColor()
         }
     }
-    Column(modifier.fillMaxSize()) {
+    Column(modifier.fillMaxSize().navigationBarsPadding()) {
         CpTopBar(modifier, viewModel, viewModel.searchName.value!!)
         SearchResultContent(modifier, viewModel)
     }

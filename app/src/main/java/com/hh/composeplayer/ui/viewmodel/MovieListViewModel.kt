@@ -3,13 +3,10 @@ package com.hh.composeplayer.ui.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.hh.composeplayer.base.BaseViewModel
-import com.hh.composeplayer.base.launch
 import com.hh.composeplayer.bean.Video
-import com.hh.composeplayer.util.boxProgress
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 
 /**
@@ -27,9 +24,9 @@ class MovieListViewModel : BaseViewModel() {
 
     fun getMovieList(state : Int,id:Long) : Flow<PagingData<Video>> {
         return  if(state == 0){
-            repository.getMoviePagingData(id,pageSize).cachedIn(viewModelScope)
+            repository.getMoviePagingData(id,pageSize).flowOn(IO)
         } else{
-            repository.getMoviePagingData(id,pageSize).cachedIn(viewModelScope)
+            repository.getMoviePagingData(id,pageSize).flowOn(IO)
         }
     }
 }
